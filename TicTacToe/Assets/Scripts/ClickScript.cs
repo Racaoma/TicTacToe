@@ -16,18 +16,18 @@ public class ClickScript : MonoBehaviour
 	//Click
 	public void OnMouseDown()
 	{
-		logicScript.makePlayHuman(cellNumber);
+        if(logicScript.enabled) logicScript.makePlayHuman(cellNumber);
 	}
 
 	//Hover
 	public void OnMouseOver()
 	{
-		logicScript.createGhost(cellNumber);
+        if(logicScript.enabled) logicScript.createGhost(cellNumber);
 	}
 
 	//Exit Hover
 	public void OnMouseExit()
 	{
-		logicScript.destroyGhost(cellNumber);
+        if(logicScript.enabled) logicScript.destroyGhost(cellNumber);
 	}
 }

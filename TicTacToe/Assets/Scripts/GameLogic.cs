@@ -12,10 +12,11 @@ public enum Player
 
 public enum PlayerType
 {
-    Human,
+    Human_Local,
+    Human_Network,
     AI_Easy,
     AI_Medium,
-    AI_Hard
+    AI_Hard,
 };
 
 public enum FirstMove
@@ -76,24 +77,20 @@ public class GameLogic : MonoBehaviour
         gameView = this.gameObject.GetComponent<GameView>();
         audioControl = this.transform.GetComponent<AudioControl>();
 
-        //Define Symbol for Each Player
-        if (Random.value >= 0.5)
-        {
-            symbolPlayer1 = Symbol.Circle;
-            symbolPlayer2 = Symbol.Cross;
-        }
-        else
-        {
-            symbolPlayer1 = Symbol.Cross;
-            symbolPlayer2 = Symbol.Circle;
-        }
-
-        //Set Symbols (define Random Symbols)
-        gameView.setSymbols(symbolPlayer1, typePlayer1, typePlayer2);
-
         //Set First Move
         currentTurn = Player.None;
         updateTurn();
+    }
+
+    //Get ClientNetworking
+    public ClientNetworking getClientNetworking()
+    {
+        ClientNetworking[] list = FindObjectsOfType<ClientNetworking>();
+        for(int i = 0; i < list.Length; i++)
+        {
+            if (list[i].hasAuthority) return list[i];
+        }
+        return null;
     }
 
     //Get Symbol by Player
@@ -133,12 +130,12 @@ public class GameLogic : MonoBehaviour
     public void createGhost(int cellNumber)
     {
         //Check if it's the player's turn
-        if (currentTurn == Player.Player1 && typePlayer1 == PlayerType.Human)
+        if (currentTurn == Player.Player1 && typePlayer1 == PlayerType.Human_Local)
         {
             //Check if Cell is Empty & Create Ghost
             if (gameState.getBoardCell(cellNumber / 3, cellNumber % 3) == Symbol.None) gameView.createGhost(cellNumber, symbolPlayer1);
         }
-        else if (currentTurn == Player.Player2 && typePlayer2 == PlayerType.Human)
+        else if (currentTurn == Player.Player2 && typePlayer2 == PlayerType.Human_Local)
         {
             //Check if Cell is Empty & Create Ghost
             if (gameState.getBoardCell(cellNumber / 3, cellNumber % 3) == Symbol.None) gameView.createGhost(cellNumber, symbolPlayer2);
@@ -211,9 +208,9 @@ public class GameLogic : MonoBehaviour
     //Make Play Human
     public void makePlayHuman(int cellNumber)
     {
-        if (currentTurn != Player.None && getTypeByPlayer(currentTurn) == PlayerType.Human)
+        if (currentTurn != Player.None && getTypeByPlayer(currentTurn) == PlayerType.Human_Local)
         {
-            if(client == null) client = FindObjectOfType<ClientNetworking>();
+            if(client == null) client = getClientNetworking();
             client.CmdSendPlay(cellNumber);
         }
     }
@@ -515,7 +512,7 @@ public class GameLogic : MonoBehaviour
     //Unity Update Method
     public void LateUpdate()
     {
-        if (currentTurn != Player.None && getTypeByPlayer(currentTurn) != PlayerType.Human)
+        if (currentTurn != Player.None && getTypeByPlayer(currentTurn) != PlayerType.Human_Local)
         {
             nextPlay -= Time.deltaTime;
             if(nextPlay < 0f) getPlayAI();

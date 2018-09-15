@@ -38,20 +38,8 @@ public class GameView : MonoBehaviour
     }
 
 	//Set Random Colors for Symbols
-	public void setSymbols(Symbol p1, PlayerType typeP1, PlayerType typeP2)
+	public void setSymbols(Symbol p1, Color color, PlayerType typeP1, PlayerType typeP2)
 	{
-		//Define Random Color for Each Player
-		if(Random.value >= 0.5)
-		{
-			colorCircle = Color.red;
-			colorCross = Color.blue;
-		}
-		else
-		{
-			colorCircle = Color.blue;
-			colorCross = Color.red;
-		}
-
         //Update Symbols and Random Color for Each Player
         if (p1 == Symbol.Circle)
         {
@@ -60,7 +48,7 @@ public class GameView : MonoBehaviour
             player2Symbol.sprite = cross;
 
             //Update Random Color & Granny's Sprites
-            if(colorCircle == Color.red)
+            if(color == Color.red)
             {
                 player1Granny.sprite = redGranny;
                 player1Symbol.color = Color.red;
@@ -82,7 +70,7 @@ public class GameView : MonoBehaviour
             player2Symbol.sprite = circle;
 
             //Update Random Color & Granny's Sprites
-            if (colorCross == Color.red)
+            if (color == Color.red)
             {
                 player1Granny.sprite = redGranny;
                 player1Symbol.color = Color.red;
@@ -204,8 +192,8 @@ public class GameView : MonoBehaviour
 
         //Display Correct Message
         if(player == Player.None) winnerPanel.GetComponentInChildren<Text>().text = "Draw";
-        else if(player == Player.Player1 && playerType == PlayerType.Human) winnerPanel.GetComponentInChildren<Text>().text = "Player 1 Victory!";
-        else if (player == Player.Player2 && playerType == PlayerType.Human) winnerPanel.GetComponentInChildren<Text>().text = "Player 2 Victory!";
+        else if(player == Player.Player1 && playerType == PlayerType.Human_Local) winnerPanel.GetComponentInChildren<Text>().text = "Player 1 Victory!";
+        else if (player == Player.Player2 && playerType == PlayerType.Human_Local) winnerPanel.GetComponentInChildren<Text>().text = "Player 2 Victory!";
         else winnerPanel.GetComponentInChildren<Text>().text = "Defeat!";
 
     }

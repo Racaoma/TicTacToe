@@ -57,8 +57,8 @@ public class PanelFlow : MonoBehaviour
     //Multi Player
     public void multiPlayer()
     {
-        GameManager.typePlayer1 = PlayerType.Human;
-        GameManager.typePlayer2 = PlayerType.Human;
+        GameManager.typePlayer1 = PlayerType.Human_Local;
+        GameManager.typePlayer2 = PlayerType.Human_Local;
 
         //Load Game!
         loadGame();
@@ -67,21 +67,21 @@ public class PanelFlow : MonoBehaviour
     //Difficulty Select Methods
     public void setDifficultyEasy()
     {
-        GameManager.typePlayer1 = PlayerType.Human;
+        GameManager.typePlayer1 = PlayerType.Human_Local;
         GameManager.typePlayer2 = PlayerType.AI_Easy;
         loadLastPanel();
     }
 
     public void setDifficultyMedium()
     {
-        GameManager.typePlayer1 = PlayerType.Human;
+        GameManager.typePlayer1 = PlayerType.Human_Local;
         GameManager.typePlayer2 = PlayerType.AI_Medium;
         loadLastPanel();
     }
 
     public void setDifficultyHard()
     {
-        GameManager.typePlayer1 = PlayerType.Human;
+        GameManager.typePlayer1 = PlayerType.Human_Local;
         GameManager.typePlayer2 = PlayerType.AI_Hard;
         loadLastPanel();
     }

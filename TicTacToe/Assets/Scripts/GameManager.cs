@@ -12,4 +12,10 @@ public class GameManager : MonoBehaviour
 
     //Start
     public static FirstMove firstMove;
+
+    //Multiplayer Config
+    public static Symbol player1Symbol;
+    public static Symbol player2Symbol;
+    public static Symbol player1Color;
+    public static Symbol player2Color;
 }

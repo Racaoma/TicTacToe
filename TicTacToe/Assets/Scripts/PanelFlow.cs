@@ -6,10 +6,7 @@ using UnityEngine.SceneManagement;
 public class PanelFlow : MonoBehaviour
 {
     //Panels
-    public GameObject panel1;
-    public GameObject panel2;
-    public GameObject panel3;
-    public GameObject creditsPanel;
+    public GameObject[] panels;
 
     //Music
     public AudioSource music;
@@ -21,37 +18,20 @@ public class PanelFlow : MonoBehaviour
         Application.Quit();
     }
 
-    public void backPanel2()
+    //Activate Certain Panel
+    public void changePanel(int panelToLoad)
     {
-        panel1.SetActive(true);
-        panel2.SetActive(false);
+        disableAllPanels();
+        panels[panelToLoad].SetActive(true);
     }
 
-    public void backPanel3()
+    //Disable All Panels
+    private void disableAllPanels()
     {
-        panel2.SetActive(true);
-        panel3.SetActive(false);
-    }
-
-    //Credits
-    public void credits()
-    {
-        panel1.SetActive(false);
-        creditsPanel.SetActive(true);
-    }
-
-    //Credits
-    public void returnFromCredits()
-    {
-        creditsPanel.SetActive(false);
-        panel1.SetActive(true);
-    }
-
-    //Single Player
-    public void singlePlayer()
-    {
-        panel1.SetActive(false);
-        panel2.SetActive(true);
+        for(int i = 0; i < panels.Length; i++)
+        {
+            panels[i].SetActive(false);
+        }
     }
 
     //Multi Player
@@ -59,9 +39,6 @@ public class PanelFlow : MonoBehaviour
     {
         GameManager.typePlayer1 = PlayerType.Human_Local;
         GameManager.typePlayer2 = PlayerType.Human_Local;
-
-        //Load Game!
-        loadGame();
     }
 
     //Difficulty Select Methods
@@ -69,58 +46,40 @@ public class PanelFlow : MonoBehaviour
     {
         GameManager.typePlayer1 = PlayerType.Human_Local;
         GameManager.typePlayer2 = PlayerType.AI_Easy;
-        loadLastPanel();
     }
 
     public void setDifficultyMedium()
     {
         GameManager.typePlayer1 = PlayerType.Human_Local;
         GameManager.typePlayer2 = PlayerType.AI_Medium;
-        loadLastPanel();
     }
 
     public void setDifficultyHard()
     {
         GameManager.typePlayer1 = PlayerType.Human_Local;
         GameManager.typePlayer2 = PlayerType.AI_Hard;
-        loadLastPanel();
     }
 
     //First Move Methods
     public void setFirstMoveHuman()
     {
         GameManager.firstMove = FirstMove.Human;
-
-        //Load Game!
-        loadGame();
     }
 
     //First Move Methods
     public void setFirstMoveAI()
     {
         GameManager.firstMove = FirstMove.AI;
-
-        //Load Game!
-        loadGame();
     }
 
     //First Move Methods
     public void setFirstMoveRandom()
     {
         GameManager.firstMove = FirstMove.Random;
-
-        //Load Game!
-        loadGame();
     }
 
-    //Inner Workings
-    private void loadLastPanel()
-    {
-        panel2.SetActive(false);
-        panel3.SetActive(true);
-    }
-
-    private void loadGame()
+    //Load Game & Fade Music
+    public void loadGame()
     {
         StartCoroutine(FadeMusic());
     }

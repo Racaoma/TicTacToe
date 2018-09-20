@@ -13,14 +13,14 @@ public class ClientNetworking : NetworkBehaviour
     //Start
     private void Start()
     {
-        player1Ready = false;
-        gameLogicRef = FindObjectOfType<GameLogic>();
-        gameViewRef = FindObjectOfType<GameView>();
+        //player1Ready = false;
+        //gameLogicRef = FindObjectOfType<GameLogic>();
+        //gameViewRef = FindObjectOfType<GameView>();
     }
 
     public override void OnStartAuthority()
     {
-        CmdSetup();
+        //CmdSetup();
     }
 
     [Command]

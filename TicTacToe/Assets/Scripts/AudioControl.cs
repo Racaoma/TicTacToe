@@ -5,9 +5,16 @@ public class AudioControl : MonoBehaviour
 {
 	//Audios
 	public AudioClip[] audios;
+    public AudioSource music;
 
 	//Audio Source
 	public AudioSource audioSource;
+
+    //Music
+    public void playMusic()
+    {
+        music.Play();
+    }
 
 	//Method for Playing Sound
 	public void playSound()

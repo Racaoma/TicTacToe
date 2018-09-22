@@ -7,12 +7,12 @@ using UnityEngine.Networking;
 public class MyNetworkManager : NetworkManager
 {
     //Variables
-    public static NetworkDiscovery Discovery;
+    public NetworkDiscovery Discovery;
 
     //Get Network Discovery
     public NetworkDiscovery getNetworkDiscovery()
     {
-        return singleton.GetComponent<NetworkDiscovery>();
+        return GetComponent<NetworkDiscovery>();
     }
 
     //On Server Connect

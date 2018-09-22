@@ -4,6 +4,9 @@ using System.Collections;
 
 public class GameView : MonoBehaviour
 {
+    //Board Reference
+    public GameObject board;
+
 	//Sprites
 	public Sprite circle;
 	public Sprite cross;
@@ -99,9 +102,9 @@ public class GameView : MonoBehaviour
 	//Reset Entire Board 
 	public void resetBoard()
 	{
-		for (int i = 0; i < this.gameObject.transform.childCount; i++) 
+		for (int i = 0; i < board.transform.childCount; i++)
 		{
-            Transform cell = this.gameObject.transform.GetChild(i);
+            Transform cell = board.transform.GetChild(i);
             cell.GetComponent<SpriteRenderer>().sprite = null;
 
             //Remove Outlines
@@ -113,7 +116,6 @@ public class GameView : MonoBehaviour
 
         //Disable Victory Panel
         winnerPanel.SetActive(false);
-
     }
 
 	//Update Exact Cell
@@ -122,13 +124,13 @@ public class GameView : MonoBehaviour
 		//Update Symbol
 		if(symbol == Symbol.Circle)
 		{
-			this.gameObject.transform.GetChild(cellNumber).GetComponent<SpriteRenderer>().sprite = circle;
-			this.gameObject.transform.GetChild (cellNumber).GetComponent<SpriteRenderer>().color = colorCircle;
+            board.transform.GetChild(cellNumber).GetComponent<SpriteRenderer>().sprite = circle;
+            board.transform.GetChild (cellNumber).GetComponent<SpriteRenderer>().color = colorCircle;
 		}
 		else
 		{
-			this.gameObject.transform.GetChild(cellNumber).GetComponent<SpriteRenderer>().sprite = cross;
-			this.gameObject.transform.GetChild (cellNumber).GetComponent<SpriteRenderer>().color = colorCross;
+            board.transform.GetChild(cellNumber).GetComponent<SpriteRenderer>().sprite = cross;
+            board.transform.GetChild (cellNumber).GetComponent<SpriteRenderer>().color = colorCross;
 		} 
 	}
 
@@ -137,7 +139,7 @@ public class GameView : MonoBehaviour
     {
         //Create Object
         GameObject highlight = new GameObject();
-        Transform parent = this.gameObject.transform.GetChild(cellNumber);
+        Transform parent = board.transform.GetChild(cellNumber);
         highlight.transform.SetParent(parent);
 
         //Set Correct Position & Scale
@@ -156,17 +158,17 @@ public class GameView : MonoBehaviour
     //Create Ghost
     public void createGhost(int cellNumber, Symbol symbol)
 	{
-		if(symbol == Symbol.Circle) this.gameObject.transform.GetChild(cellNumber).GetComponent<SpriteRenderer>().sprite = circle;
-		else this.gameObject.transform.GetChild(cellNumber).GetComponent<SpriteRenderer>().sprite = cross;
+		if(symbol == Symbol.Circle) board.transform.GetChild(cellNumber).GetComponent<SpriteRenderer>().sprite = circle;
+		else board.transform.GetChild(cellNumber).GetComponent<SpriteRenderer>().sprite = cross;
 
-		//Make it Transparent
-		this.gameObject.transform.GetChild (cellNumber).GetComponent<SpriteRenderer> ().color = new Color (0f,0f,0f,0.3f);
+        //Make it Transparent
+        board.transform.GetChild (cellNumber).GetComponent<SpriteRenderer> ().color = new Color (0f,0f,0f,0.3f);
 	}
 
 	//Destroy Ghost
 	public void destroyGhost(int cellNumber)
 	{
-		this.gameObject.transform.GetChild(cellNumber).GetComponent<SpriteRenderer>().sprite = null;
+        board.transform.GetChild(cellNumber).GetComponent<SpriteRenderer>().sprite = null;
 	}
 
 	//Highlight Player

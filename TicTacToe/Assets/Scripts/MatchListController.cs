@@ -8,6 +8,7 @@ public class MatchListController : MonoBehaviour
     //References
     public GameObject MatchButtonTemplate;
     public GameObject viewPort;
+    private MyNetworkManager networkManager;
 
     //Variables
     public float DiscoveryUpdatePeriod = 0.5f;
@@ -24,8 +25,9 @@ public class MatchListController : MonoBehaviour
         updateTimer = 0f;
 
         //Network
-        MyNetworkManager.Discovery.Initialize();
-        MyNetworkManager.Discovery.StartAsClient();
+        networkManager = MyNetworkManager.singleton.GetComponent<MyNetworkManager>();
+        networkManager.getNetworkDiscovery().Initialize();
+        networkManager.getNetworkDiscovery().StartAsClient();
     }
 
     //Update
@@ -42,31 +44,34 @@ public class MatchListController : MonoBehaviour
     //Refresh Matches
     private void RefreshMatches()
     {
-        //Get Broadcasts
-        broadcastResults.Clear();
-        foreach (var match in MyNetworkManager.Discovery.broadcastsReceived.Values)
+        if(networkManager.getNetworkDiscovery().broadcastsReceived != null)
         {
-            broadcastResults.Add(match);
-        }
-
-        //Update Buttons
-        int i = 0;
-        for (; i < broadcastResults.Count; i++)
-        {
-            //Check for existing buttons
-            if(i < matches.Count) matches[i].GetComponent<MatchButton>().updateInfo(broadcastResults[i]);
-            else
+            //Get Broadcasts
+            broadcastResults.Clear();
+            foreach (var match in networkManager.getNetworkDiscovery().broadcastsReceived.Values)
             {
-                GameObject buttonObject = Instantiate(MatchButtonTemplate);
-                buttonObject.transform.SetParent(viewPort.transform);
-                matches.Add(buttonObject);
+                broadcastResults.Add(match);
             }
-        }
 
-        //Disable extra buttons for closed matches
-        for (; i < matches.Count; i++)
-        {
-            matches[i].SetActive(false);
+            //Update Buttons
+            int i = 0;
+            for (; i < broadcastResults.Count; i++)
+            {
+                //Check for existing buttons
+                if (i < matches.Count) matches[i].GetComponent<MatchButton>().updateInfo(broadcastResults[i]);
+                else
+                {
+                    GameObject buttonObject = Instantiate(MatchButtonTemplate);
+                    buttonObject.transform.SetParent(viewPort.transform, false);
+                    matches.Add(buttonObject);
+                }
+            }
+
+            //Disable extra buttons for closed matches
+            for (; i < matches.Count; i++)
+            {
+                matches[i].SetActive(false);
+            }
         }
     }
 }

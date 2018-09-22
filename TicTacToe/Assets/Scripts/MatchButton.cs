@@ -18,10 +18,14 @@ public class MatchButton : MonoBehaviour
     }
 
     //Main Button Logic
-    public void Button_Click()
+    public void EnterMatch()
     {
         MyNetworkManager.singleton.networkAddress = networkData.serverAddress;
         MyNetworkManager.singleton.StartClient();
-        MyNetworkManager.Discovery.StopBroadcast();
+
+        MyNetworkManager networkManager = MyNetworkManager.singleton.GetComponent<MyNetworkManager>();
+        networkManager.getNetworkDiscovery().StopBroadcast();
+
+        FindObjectOfType<PanelFlow>().loadGame();
     }
 }

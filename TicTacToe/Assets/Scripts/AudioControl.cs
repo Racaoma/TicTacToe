@@ -10,6 +10,9 @@ public class AudioControl : MonoBehaviour
 	//Audio Source
 	public AudioSource audioSource;
 
+    //Control Variable
+    public float fadeTime = 1.75f;
+
     //Music
     public void playMusic()
     {
@@ -22,4 +25,15 @@ public class AudioControl : MonoBehaviour
 		audioSource.clip = audios[Random.Range(0, audios.Length)];
 		audioSource.Play();
 	}
+
+    public IEnumerator FadeMusic()
+    {
+        while (music.volume > .1F)
+        {
+            music.volume = Mathf.Lerp(music.volume, 0F, fadeTime * Time.deltaTime);
+            yield return 0;
+        }
+        music.volume = 0;
+        FindObjectOfType<GameFlowManager>().loadTitleScreen(false);
+    }
 }

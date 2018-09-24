@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
-using UnityEngine.SceneManagement;
 
 public class PanelFlow : MonoBehaviour
 {
@@ -63,19 +62,19 @@ public class PanelFlow : MonoBehaviour
     //First Move Methods
     public void setFirstMoveHuman()
     {
-        GameManager.firstMove = FirstMove.Human;
+        GameManager.firstMove = Player.Player1;
     }
 
     //First Move Methods
-    public void setFirstMoveAI()
+    public void setFirstMoveOpponnent()
     {
-        GameManager.firstMove = FirstMove.AI;
+        GameManager.firstMove = Player.Player2;
     }
 
     //First Move Methods
     public void setFirstMoveRandom()
     {
-        GameManager.firstMove = FirstMove.Random;
+        GameManager.firstMove = Player.None;
     }
 
     //Load Game & Fade Music
@@ -92,6 +91,8 @@ public class PanelFlow : MonoBehaviour
             yield return 0;
         }
         music.volume = 0;
-        SceneManager.LoadScene("Game", LoadSceneMode.Single);
+
+        //Change Scene
+        MyNetworkManager.singleton.ServerChangeScene("Game");
     }
 }

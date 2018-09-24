@@ -6,7 +6,7 @@ using UnityEngine.Networking;
 
 public class MyNetworkManager : NetworkManager
 {
-    //Variables
+    //Refences
     public NetworkDiscovery Discovery;
 
     //Get Network Discovery
@@ -15,10 +15,47 @@ public class MyNetworkManager : NetworkManager
         return GetComponent<NetworkDiscovery>();
     }
 
-    //On Server Connect
-    public override void OnServerConnect(NetworkConnection conn)
+    //On Host Start
+    public override void OnStartHost()
     {
-        if (conn.address == "localClient") return;
-        //else do something
+        //Define Symbol Random
+        if(GameManager.player1Symbol == Symbol.None)
+        {
+            if (UnityEngine.Random.value >= 0.5f)
+            {
+                GameManager.player1Symbol = Symbol.Circle;
+                GameManager.player2Symbol = Symbol.Cross;
+            }
+            else
+            {
+                GameManager.player1Symbol = Symbol.Cross;
+                GameManager.player2Symbol = Symbol.Circle;
+            }
+        }
+
+        //Define Color Random
+        if (UnityEngine.Random.value >= 0.5f)
+        {
+            GameManager.player1Color = Color.red;
+            GameManager.player2Color = Color.blue;
+        }
+        else
+        {
+            GameManager.player1Color = Color.blue;
+            GameManager.player2Color = Color.red;
+        }
+
+        //Define Starting Player Random
+        if(GameManager.firstMove == Player.None)
+        {
+            if (UnityEngine.Random.value >= 0.5f) GameManager.firstMove = Player.Player1;
+            else GameManager.firstMove = Player.Player2;
+        }
+    }
+
+    //On Scene Change
+    public override void OnClientSceneChanged(NetworkConnection conn)
+    {
+        ClientScene.AddPlayer(conn, 1);
     }
 }

@@ -28,65 +28,49 @@ public class GameView : MonoBehaviour
     public Image player1Symbol;
     public Image player2Symbol;
 
-    //Victory Panel
+    //Panels
     public GameObject winnerPanel;
+    public GameObject standbyPanel;
 
-	//Highlight Decay
-	private float highlightDecay = 1.75f;
+    //Highlight Decay
+    private float highlightDecay = 1.75f;
 
 	//Start Method
 	void Start() 
 	{
-		resetBoard();
+        standbyPanel.SetActive(false);
+        resetBoard();
     }
 
 	//Set Random Colors for Symbols
-	public void setSymbols(Symbol p1, Color color, PlayerType typeP1, PlayerType typeP2)
+	public void setSymbols(Symbol p1, Color p1color, PlayerType typeP1, PlayerType typeP2)
 	{
-        //Update Symbols and Random Color for Each Player
-        if (p1 == Symbol.Circle)
+        //Update Random Color & Granny's Sprites
+        if (p1color == Color.red)
         {
-            //Update Symbol
-            player1Symbol.sprite = circle;
-            player2Symbol.sprite = cross;
-
-            //Update Random Color & Granny's Sprites
-            if(color == Color.red)
-            {
-                player1Granny.sprite = redGranny;
-                player1Symbol.color = Color.red;
-                player2Granny.sprite = blueGranny;
-                player2Symbol.color = Color.blue;
-            }
-            else
-            {
-                player1Granny.sprite = blueGranny;
-                player1Symbol.color = Color.blue;
-                player2Granny.sprite = redGranny;
-                player2Symbol.color = Color.red;
-            }
+            player1Granny.sprite = redGranny;
+            player1Symbol.color = Color.red;
+            player2Granny.sprite = blueGranny;
+            player2Symbol.color = Color.blue;
         }
         else
         {
-            //Update Symbol
+            player1Granny.sprite = blueGranny;
+            player1Symbol.color = Color.blue;
+            player2Granny.sprite = redGranny;
+            player2Symbol.color = Color.red;
+        }
+
+        //Update Symbols
+        if (p1 == Symbol.Circle)
+        {
+            player1Symbol.sprite = circle;
+            player2Symbol.sprite = cross;
+        }
+        else
+        {
             player1Symbol.sprite = cross;
             player2Symbol.sprite = circle;
-
-            //Update Random Color & Granny's Sprites
-            if (color == Color.red)
-            {
-                player1Granny.sprite = redGranny;
-                player1Symbol.color = Color.red;
-                player2Granny.sprite = blueGranny;
-                player2Symbol.color = Color.blue;
-            }
-            else
-            {
-                player1Granny.sprite = blueGranny;
-                player1Symbol.color = Color.blue;
-                player2Granny.sprite = redGranny;
-                player2Symbol.color = Color.red;
-            }
         }
 
         //Update Text - Default = Human

@@ -10,24 +10,24 @@ public class ClickScript : MonoBehaviour
 	//Get Game Logic
 	void Start()
 	{
-		logicScript = GetComponentInParent<GameLogic>();
+		logicScript = FindObjectOfType<GameLogic>();
 	}
 
 	//Click
 	public void OnMouseDown()
 	{
-        if(logicScript.enabled) logicScript.makePlayHuman(cellNumber);
+        logicScript.makePlayHuman(cellNumber);
 	}
 
 	//Hover
 	public void OnMouseOver()
 	{
-        if(logicScript.enabled) logicScript.createGhost(cellNumber);
+        logicScript.createGhost(cellNumber);
 	}
 
 	//Exit Hover
 	public void OnMouseExit()
 	{
-        if(logicScript.enabled) logicScript.destroyGhost(cellNumber);
+        logicScript.destroyGhost(cellNumber);
 	}
 }

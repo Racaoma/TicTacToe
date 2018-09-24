@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine.SceneManagement;
 
 public enum Player
 {
@@ -17,13 +16,6 @@ public enum PlayerType
     AI_Easy,
     AI_Medium,
     AI_Hard,
-};
-
-public enum FirstMove
-{
-    AI,
-    Human,
-    Random
 };
 
 public struct Tuple
@@ -42,10 +34,6 @@ public class GameLogic : MonoBehaviour
     //Multiplayer
     private ClientNetworking client;
 
-    //Music
-    public AudioSource music;
-    public float fadeTime = 1.75f;
-
     //Delay for AI
     private float nextPlay;
     public float delayAI = 0.8f;
@@ -58,7 +46,7 @@ public class GameLogic : MonoBehaviour
     private Symbol symbolPlayer2;
 
     //First Move
-    private FirstMove firstMove;
+    private Player firstMove;
 
     //Human or AI Player
     private PlayerType typePlayer1;
@@ -75,7 +63,10 @@ public class GameLogic : MonoBehaviour
         //Load Scripts
         gameState = GameState.Instance;
         gameView = this.gameObject.GetComponent<GameView>();
-        audioControl = this.transform.GetComponent<AudioControl>();
+        audioControl = FindObjectOfType<AudioControl>();
+
+        //Get Network Client
+        client = getClientNetworking();
 
         //Set First Move
         currentTurn = Player.None;
@@ -158,8 +149,8 @@ public class GameLogic : MonoBehaviour
         else
         {
             //First Move!
-            if (firstMove == FirstMove.Human) currentTurn = Player.Player1;
-            else if (firstMove == FirstMove.AI) currentTurn = Player.Player2;
+            if (firstMove == Player.Player1) currentTurn = Player.Player1;
+            else if (firstMove == Player.Player2) currentTurn = Player.Player2;
             else currentTurn = Random.value >= 0.5 ? Player.Player1 : Player.Player2;
         }
 
@@ -208,7 +199,7 @@ public class GameLogic : MonoBehaviour
     //Make Play Human
     public void makePlayHuman(int cellNumber)
     {
-        if (currentTurn != Player.None && getTypeByPlayer(currentTurn) == PlayerType.Human_Local)
+        if (currentTurn == client.getPlayer())
         {
             if(client == null) client = getClientNetworking();
             client.CmdSendPlay(cellNumber);
@@ -490,23 +481,6 @@ public class GameLogic : MonoBehaviour
             //Finally...
             return min;
         }
-    }
-
-    //Return to Main Menu
-    public void loadTitleScreen()
-    {
-        StartCoroutine(FadeMusic());
-    }
-
-    public IEnumerator FadeMusic()
-    {
-        while (music.volume > .1F)
-        {
-            music.volume = Mathf.Lerp(music.volume, 0F, fadeTime * Time.deltaTime);
-            yield return 0;
-        }
-        music.volume = 0;
-        SceneManager.LoadScene("TitleScreen", LoadSceneMode.Single);
     }
 
     //Unity Update Method

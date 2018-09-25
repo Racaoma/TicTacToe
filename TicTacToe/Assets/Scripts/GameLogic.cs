@@ -121,15 +121,10 @@ public class GameLogic : MonoBehaviour
     public void createGhost(int cellNumber)
     {
         //Check if it's the player's turn
-        if (currentTurn == Player.Player1 && typePlayer1 == PlayerType.Human_Local)
+        if (currentTurn == client.getPlayer())
         {
             //Check if Cell is Empty & Create Ghost
-            if (gameState.getBoardCell(cellNumber / 3, cellNumber % 3) == Symbol.None) gameView.createGhost(cellNumber, symbolPlayer1);
-        }
-        else if (currentTurn == Player.Player2 && typePlayer2 == PlayerType.Human_Local)
-        {
-            //Check if Cell is Empty & Create Ghost
-            if (gameState.getBoardCell(cellNumber / 3, cellNumber % 3) == Symbol.None) gameView.createGhost(cellNumber, symbolPlayer2);
+            if (gameState.getBoardCell(cellNumber / 3, cellNumber % 3) == Symbol.None) gameView.createGhost(cellNumber, getSymbolByPlayer(currentTurn));
         }
     }
 

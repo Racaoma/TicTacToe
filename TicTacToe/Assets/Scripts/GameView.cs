@@ -31,6 +31,8 @@ public class GameView : MonoBehaviour
     //Panels
     public GameObject winnerPanel;
     public GameObject standbyPanel;
+    public GameObject p1Panel;
+    public GameObject p2Panel;
 
     //Highlight Decay
     private float highlightDecay = 1.75f;
@@ -38,15 +40,21 @@ public class GameView : MonoBehaviour
 	//Start Method
 	void Start() 
 	{
-        standbyPanel.SetActive(false);
+        //Setup
         resetBoard();
+        setSymbols();
+
+        //Enable Panels
+        standbyPanel.SetActive(false);
+        p1Panel.SetActive(true);
+        p2Panel.SetActive(true);
     }
 
 	//Set Random Colors for Symbols
-	public void setSymbols(Symbol p1, Color p1color, PlayerType typeP1, PlayerType typeP2)
+	public void setSymbols()
 	{
         //Update Random Color & Granny's Sprites
-        if (p1color == Color.red)
+        if (GameManager.player1Color == Color.red)
         {
             player1Granny.sprite = redGranny;
             player1Symbol.color = Color.red;
@@ -62,7 +70,7 @@ public class GameView : MonoBehaviour
         }
 
         //Update Symbols
-        if (p1 == Symbol.Circle)
+        if (GameManager.player1Symbol == Symbol.Circle)
         {
             player1Symbol.sprite = circle;
             player2Symbol.sprite = cross;
@@ -74,13 +82,13 @@ public class GameView : MonoBehaviour
         }
 
         //Update Text - Default = Human
-        if (typeP1 == PlayerType.AI_Easy) player1Text.text = "Easy AI";
-        else if (typeP1 == PlayerType.AI_Medium) player1Text.text = "Medium AI";
-        else if (typeP1 == PlayerType.AI_Hard) player1Text.text = "Hard AI";
+        if (GameManager.typePlayer1 == PlayerType.AI_Easy) player1Text.text = "Easy AI";
+        else if (GameManager.typePlayer1 == PlayerType.AI_Medium) player1Text.text = "Medium AI";
+        else if (GameManager.typePlayer1 == PlayerType.AI_Hard) player1Text.text = "Hard AI";
 
-        if (typeP2 == PlayerType.AI_Easy) player2Text.text = "Easy AI";
-        else if (typeP2 == PlayerType.AI_Medium) player2Text.text = "Medium AI";
-        else if (typeP2 == PlayerType.AI_Hard) player2Text.text = "Hard AI";
+        if (GameManager.typePlayer2 == PlayerType.AI_Easy) player2Text.text = "Easy AI";
+        else if (GameManager.typePlayer2 == PlayerType.AI_Medium) player2Text.text = "Medium AI";
+        else if (GameManager.typePlayer2 == PlayerType.AI_Hard) player2Text.text = "Hard AI";
     }
 
 	//Reset Entire Board 

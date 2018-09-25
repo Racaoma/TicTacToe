@@ -19,9 +19,15 @@ public class GameFlowManager : MonoBehaviour
     //Setup Game
     public void startGame()
     {
+        //Start Board
         this.GetComponent<GameLogic>().enabled = true;
         boardObject.SetActive(true);
-        this.GetComponent<GameView>().enabled = true;
+
+        //Start View
+        GameView view = this.GetComponent<GameView>();
+        view.enabled = true;
+
+        //Start Music
         audioControl.playMusic();
     }
 }

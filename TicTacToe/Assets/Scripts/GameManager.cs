@@ -3,10 +3,6 @@ using System.Collections;
 
 public class GameManager : MonoBehaviour
 {
-    //Difficulty
-    public static PlayerType typePlayer1;
-    public static PlayerType typePlayer2;
-
     //Start
     public static Player firstMove;
 
@@ -19,8 +15,6 @@ public class GameManager : MonoBehaviour
     //Reset
     public static void reset()
     {
-        typePlayer1 = PlayerType.Human_Local;
-        typePlayer2 = PlayerType.Human_Local;
         firstMove = Player.None;
         player1Symbol = Symbol.None;
         player2Symbol = Symbol.None;

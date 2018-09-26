@@ -33,32 +33,6 @@ public class PanelFlow : MonoBehaviour
         }
     }
 
-    //Multi Player
-    public void multiPlayer()
-    {
-        GameManager.typePlayer1 = PlayerType.Human_Local;
-        GameManager.typePlayer2 = PlayerType.Human_Local;
-    }
-
-    //Difficulty Select Methods
-    public void setDifficultyEasy()
-    {
-        GameManager.typePlayer1 = PlayerType.Human_Local;
-        GameManager.typePlayer2 = PlayerType.AI_Easy;
-    }
-
-    public void setDifficultyMedium()
-    {
-        GameManager.typePlayer1 = PlayerType.Human_Local;
-        GameManager.typePlayer2 = PlayerType.AI_Medium;
-    }
-
-    public void setDifficultyHard()
-    {
-        GameManager.typePlayer1 = PlayerType.Human_Local;
-        GameManager.typePlayer2 = PlayerType.AI_Hard;
-    }
-
     //First Move Methods
     public void setFirstMoveHuman()
     {

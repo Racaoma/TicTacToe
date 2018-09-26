@@ -7,7 +7,7 @@ using UnityEngine.Networking;
 public class MyNetworkManager : NetworkManager
 {
     //Refences
-    public NetworkDiscovery Discovery;
+    private NetworkDiscovery Discovery;
 
     //Get Network Discovery
     public NetworkDiscovery getNetworkDiscovery()

@@ -10,32 +10,48 @@ public enum Symbol
     Draw
 };
 
-public class GameState : MonoBehaviour 
+public class GameState : MonoBehaviour
 {
-	//Variables
 	private static GameState instance;
-	private Symbol[,] board;
-
-	//Singleton Constructor
-	private GameState()
-	{ 
-		board = new Symbol[3,3];
+    public static GameState Instance
+    {
+        get
+        {
+            return instance;
+        }
     }
 
-	public static GameState Instance
-	{
-		get
-		{
-			if (instance == null)
-			{
-				instance = new GameState();
-			}
-			return instance;
-		}
-	}
+    //On Object Awake
+    private void Awake()
+    {
+        //Check Singleton
+        if (instance != null && instance != this)
+        {
+            Destroy(this);
+        }
+        else
+        {
+            instance = this;
+        }
+    }
 
-	//Reset Board
-	public void resetBoard()
+    //On Object Destroy (Safeguard)
+    public void OnDestroy()
+    {
+        instance = null;
+    }
+
+    //Variables
+    private Symbol[,] board;
+
+    //Singleton Constructor
+    private GameState()
+    {
+        board = new Symbol[3, 3];
+    }
+
+    //Reset Board
+    public void resetBoard()
 	{
 		for(int i = 0; i < 3; i++)
 		{

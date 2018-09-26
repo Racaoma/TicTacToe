@@ -5,60 +5,97 @@ using UnityEngine.Networking;
 
 public class ClientNetworking : NetworkBehaviour
 {
-    //Variables
-    private Player player;
-    private GameLogic gameLogicRef;
-    private bool player1Ready;
+    //References
+    private ServerNetworking server;
 
-    //Start
-    private void Start()
+    //Sync Variables
+    public Player localPlayer;
+    public Symbol localSymbol;
+    public Color localColor;
+
+    //Control Variables
+    [SyncVar, SerializeField]
+    private Player currentTurn;
+
+    //On Start Authority
+    public override void OnStartAuthority()
     {
-        CmdSyncSetup();
-        if (NetworkServer.active) player = Player.Player1;
+        //Host Side
+        if (NetworkServer.active)
+        {
+            localPlayer = Player.Player1;
+            CmdRequestSync(localPlayer);
+            currentTurn = GameManager.firstMove;
+
+            //Spawn Server
+            GameObject obj = Instantiate(MyNetworkManager.singleton.spawnPrefabs[0], Vector3.zero, Quaternion.identity);
+            NetworkServer.Spawn(obj);
+            server = obj.GetComponent<ServerNetworking>();
+        }
+        //Client Side
         else
         {
-            player = Player.Player2;
+            localPlayer = Player.Player2;
+            CmdRequestSync(localPlayer);
             CmdRequestStartGame();
         }
     }
 
-    //Check which Player you are
-    public Player getPlayer()
+    //Get ClientNetworking
+    public static ClientNetworking getLocalClientNetworking()
     {
-        return player;
+        ClientNetworking[] list = FindObjectsOfType<ClientNetworking>();
+        for (int i = 0; i < list.Length; i++)
+        {
+            if (list[i].hasAuthority) return list[i];
+        }
+        return null;
     }
 
+    //Check Turn
+    public bool isMyTurn()
+    {
+        return currentTurn == localPlayer;
+    }
+
+    //Make Play
     [Command]
     public void CmdSendPlay(int cellNumber)
     {
-        RpcRelayPlay(cellNumber);
+        server.makePlay(cellNumber, localSymbol);
     }
 
     [ClientRpc]
-    public void RpcRelayPlay(int cellNumber)
+    public void RpcRelayPlay(int cellNumber, Symbol symbol)
     {
-        gameLogicRef.makePlay(cellNumber);
+        //Update States
+        int row = cellNumber / 3;
+        int column = cellNumber % 3;
+        GameState.Instance.updateCell(row, column, symbol);
+        GameView.Instance.destroyGhost(cellNumber); //If Any
+        GameView.Instance.updateCell(cellNumber, symbol);
+
+        //Update Turn
+        if (currentTurn == Player.Player1) currentTurn = Player.Player2;
+        else currentTurn = Player.Player1;
     }
 
+    //Request Initial Sync
     [Command]
-    public void CmdSyncSetup()
+    public void CmdRequestSync(Player player)
     {
-        RpcRelaySyncSetup(GameManager.typePlayer1, GameManager.typePlayer2, GameManager.firstMove, GameManager.player1Symbol, GameManager.player2Symbol, GameManager.player1Color, GameManager.player2Color);
+        if (player == Player.Player1) TargetRpcRelaySync(connectionToClient,GameManager.player1Symbol, GameManager.player1Color);
+        else TargetRpcRelaySync(connectionToClient, GameManager.player2Symbol, GameManager.player2Color);
     }
 
-    [ClientRpc]
-    public void RpcRelaySyncSetup(PlayerType p1type, PlayerType p2type, Player firstMove, Symbol player1Symbol, Symbol player2Symbol, Color player1Color, Color player2Color)
+    [TargetRpc]
+    public void TargetRpcRelaySync(NetworkConnection target, Symbol symbolPlayer, Color colorPlayer)
     {
-        gameLogicRef = FindObjectOfType<GameLogic>();
-        GameManager.typePlayer1 = p1type;
-        GameManager.typePlayer2 = p2type;
-        GameManager.firstMove = firstMove;
-        GameManager.player1Symbol = player1Symbol;
-        GameManager.player2Symbol = player2Symbol;
-        GameManager.player1Color = player1Color;
-        GameManager.player2Color = player2Color;
+        localSymbol = symbolPlayer;
+        localColor = colorPlayer;
     }
 
+    //Start Game
     [Command]
     public void CmdRequestStartGame()
     {
@@ -69,5 +106,13 @@ public class ClientNetworking : NetworkBehaviour
     public void RpcRelayStartGame()
     {
         FindObjectOfType<GameFlowManager>().startGame();
+    }
+
+    //Display Winner
+    [ClientRpc]
+    public void RpcRelayWinner(VictoryType victoryType, Symbol winnerSymbol)
+    {
+        GameView.Instance.displayWinner(victoryType, winnerSymbol == localSymbol);
+        currentTurn = Player.None;
     }
 }

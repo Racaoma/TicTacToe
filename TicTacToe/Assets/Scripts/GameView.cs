@@ -37,8 +37,37 @@ public class GameView : MonoBehaviour
     //Highlight Decay
     private float highlightDecay = 1.75f;
 
-	//Start Method
-	void Start() 
+    private static GameView instance;
+    public static GameView Instance
+    {
+        get
+        {
+            return instance;
+        }
+    }
+
+    //On Object Awake
+    private void Awake()
+    {
+        //Check Singleton
+        if (instance != null && instance != this)
+        {
+            Destroy(this);
+        }
+        else
+        {
+            instance = this;
+        }
+    }
+
+    //On Object Destroy (Safeguard)
+    public void OnDestroy()
+    {
+        instance = null;
+    }
+
+    //Start Method
+    void Start() 
 	{
         //Setup
         resetBoard();
@@ -53,42 +82,114 @@ public class GameView : MonoBehaviour
 	//Set Random Colors for Symbols
 	public void setSymbols()
 	{
-        //Update Random Color & Granny's Sprites
-        if (GameManager.player1Color == Color.red)
+        //Check Which Player You Are (Player 1)
+        if (ClientNetworking.getLocalClientNetworking().localPlayer == Player.Player1)
         {
-            player1Granny.sprite = redGranny;
-            player1Symbol.color = Color.red;
-            player2Granny.sprite = blueGranny;
-            player2Symbol.color = Color.blue;
+            //Color Red
+            if (ClientNetworking.getLocalClientNetworking().localColor == Color.red)
+            {
+                //Update Random Color & Granny's Sprites
+                player1Granny.sprite = redGranny;
+                player1Symbol.color = Color.red;
+                player2Granny.sprite = blueGranny;
+                player2Symbol.color = Color.blue;
+
+                //Update Symbols
+                if (ClientNetworking.getLocalClientNetworking().localSymbol == Symbol.Circle)
+                {
+                    player1Symbol.sprite = circle;
+                    player2Symbol.sprite = cross;
+                    colorCircle = Color.red;
+                    colorCross = Color.blue;
+                }
+                else
+                {
+                    player1Symbol.sprite = cross;
+                    player2Symbol.sprite = circle;
+                    colorCircle = Color.blue;
+                    colorCross = Color.red;
+                }
+            }
+            //Color Blue
+            else
+            {
+                //Update Random Color & Granny's Sprites
+                player1Granny.sprite = blueGranny;
+                player1Symbol.color = Color.blue;
+                player2Granny.sprite = redGranny;
+                player2Symbol.color = Color.red;
+
+                //Update Symbols
+                if (ClientNetworking.getLocalClientNetworking().localSymbol == Symbol.Circle)
+                {
+                    player1Symbol.sprite = circle;
+                    player2Symbol.sprite = cross;
+                    colorCircle = Color.blue;
+                    colorCross = Color.red;
+                }
+                else
+                {
+                    player1Symbol.sprite = cross;
+                    player2Symbol.sprite = circle;
+                    colorCircle = Color.red;
+                    colorCross = Color.blue;
+                }
+            }
         }
+        //Check Which Player You Are (Player 2)
         else
         {
-            player1Granny.sprite = blueGranny;
-            player1Symbol.color = Color.blue;
-            player2Granny.sprite = redGranny;
-            player2Symbol.color = Color.red;
-        }
+            //Color Red
+            if (ClientNetworking.getLocalClientNetworking().localColor == Color.red)
+            {
+                //Update Random Color & Granny's Sprites
+                player1Granny.sprite = blueGranny;
+                player1Symbol.color = Color.blue;
+                player2Granny.sprite = redGranny;
+                player2Symbol.color = Color.red;
 
-        //Update Symbols
-        if (GameManager.player1Symbol == Symbol.Circle)
-        {
-            player1Symbol.sprite = circle;
-            player2Symbol.sprite = cross;
-        }
-        else
-        {
-            player1Symbol.sprite = cross;
-            player2Symbol.sprite = circle;
-        }
+                //Update Symbols
+                if (ClientNetworking.getLocalClientNetworking().localSymbol == Symbol.Circle)
+                {
+                    player1Symbol.sprite = cross;
+                    player2Symbol.sprite = circle;
+                    colorCircle = Color.red;
+                    colorCross = Color.blue;
+                }
+                else
+                {
+                    player1Symbol.sprite = cross;
+                    player2Symbol.sprite = circle;
+                    colorCircle = Color.blue;
+                    colorCross = Color.red;
+                }
+            }
+            //Color Blue
+            else
+            {
+                //Update Random Color & Granny's Sprites
+                player1Granny.sprite = redGranny;
+                player1Symbol.color = Color.red;
+                player2Granny.sprite = blueGranny;
+                player2Symbol.color = Color.blue;
 
-        //Update Text - Default = Human
-        if (GameManager.typePlayer1 == PlayerType.AI_Easy) player1Text.text = "Easy AI";
-        else if (GameManager.typePlayer1 == PlayerType.AI_Medium) player1Text.text = "Medium AI";
-        else if (GameManager.typePlayer1 == PlayerType.AI_Hard) player1Text.text = "Hard AI";
-
-        if (GameManager.typePlayer2 == PlayerType.AI_Easy) player2Text.text = "Easy AI";
-        else if (GameManager.typePlayer2 == PlayerType.AI_Medium) player2Text.text = "Medium AI";
-        else if (GameManager.typePlayer2 == PlayerType.AI_Hard) player2Text.text = "Hard AI";
+                //Update Symbols
+                if (ClientNetworking.getLocalClientNetworking().localSymbol == Symbol.Circle)
+                {
+                    player1Symbol.sprite = cross;
+                    player2Symbol.sprite = circle;
+                    colorCircle = Color.blue;
+                    colorCross = Color.red;
+                }
+                else
+                {
+                    player1Symbol.sprite = cross;
+                    player2Symbol.sprite = circle;
+                    colorCircle = Color.red;
+                    colorCross = Color.blue;
+                }
+            }
+        }
     }
 
 	//Reset Entire Board 
@@ -178,17 +279,65 @@ public class GameView : MonoBehaviour
         if (player2Granny.transform.localScale.x < -1.15f || player2Granny.transform.localScale.y > 1.15f) player2Granny.transform.localScale = Vector3.Lerp(player2Granny.transform.localScale, new Vector3(-1.15f, 1.15f, 1f), highlightDecay * Time.deltaTime);
 	}
 
-	//Display Winner
-	public void displayWinner(Player player, PlayerType playerType)
+    //Display Winner
+    public void displayWinner(VictoryType victoryType, bool winner)
 	{
-        //Enable Panel
-        winnerPanel.SetActive(true);
+        //Outline Cells
+        if (victoryType == VictoryType.Line1)
+        {
+            outlineCell(0);
+            outlineCell(1);
+            outlineCell(2);
+        }
+        else if(victoryType == VictoryType.Line2)
+        {
+            outlineCell(3);
+            outlineCell(4);
+            outlineCell(5);
+        }
+        else if (victoryType == VictoryType.Line3)
+        {
+            outlineCell(6);
+            outlineCell(7);
+            outlineCell(8);
+        }
+        else if (victoryType == VictoryType.Column1)
+        {
+            outlineCell(0);
+            outlineCell(3);
+            outlineCell(6);
+        }
+        else if (victoryType == VictoryType.Column2)
+        {
+            outlineCell(1);
+            outlineCell(4);
+            outlineCell(7);
+        }
+        else if (victoryType == VictoryType.Column3)
+        {
+            outlineCell(2);
+            outlineCell(5);
+            outlineCell(8);
+        }
+        else if (victoryType == VictoryType.MainDiagonal)
+        {
+            outlineCell(0);
+            outlineCell(4);
+            outlineCell(8);
+        }
+        else if (victoryType == VictoryType.SecondaryDiagonal)
+        {
+            outlineCell(2);
+            outlineCell(4);
+            outlineCell(6);
+        }
 
         //Display Correct Message
-        if(player == Player.None) winnerPanel.GetComponentInChildren<Text>().text = "Draw";
-        else if(player == Player.Player1 && playerType == PlayerType.Human_Local) winnerPanel.GetComponentInChildren<Text>().text = "Player 1 Victory!";
-        else if (player == Player.Player2 && playerType == PlayerType.Human_Local) winnerPanel.GetComponentInChildren<Text>().text = "Player 2 Victory!";
+        if (victoryType == VictoryType.Draw) winnerPanel.GetComponentInChildren<Text>().text = "Draw";
+        else if (winner) winnerPanel.GetComponentInChildren<Text>().text = "Victory!";
         else winnerPanel.GetComponentInChildren<Text>().text = "Defeat!";
 
+        //Enable Panel
+        winnerPanel.SetActive(true);
     }
 }

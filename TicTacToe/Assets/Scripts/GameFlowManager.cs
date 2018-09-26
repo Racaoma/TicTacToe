@@ -20,12 +20,15 @@ public class GameFlowManager : MonoBehaviour
     public void startGame()
     {
         //Start Board
-        this.GetComponent<GameLogic>().enabled = true;
         boardObject.SetActive(true);
 
         //Start View
         GameView view = this.GetComponent<GameView>();
         view.enabled = true;
+
+        //Reset Board
+        GameState.Instance.resetBoard();
+        view.resetBoard();
 
         //Start Music
         audioControl.playMusic();

@@ -24,9 +24,6 @@ public class HostGameButton : MonoBehaviour
             else if (startingPlayer.value == 1) GameManager.firstMove = Player.Player1;
             else if (startingPlayer.value == 2) GameManager.firstMove = Player.Player2;
 
-            GameManager.typePlayer1 = PlayerType.Human_Network;
-            GameManager.typePlayer2 = PlayerType.Human_Network;
-
             //Network
             MyNetworkManager networkManager = MyNetworkManager.singleton.GetComponent<MyNetworkManager>();
             networkManager.getNetworkDiscovery().StopBroadcast();

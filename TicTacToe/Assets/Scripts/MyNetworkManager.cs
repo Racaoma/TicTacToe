@@ -53,9 +53,18 @@ public class MyNetworkManager : NetworkManager
         }
     }
 
+    //On Server Add Player
+    public override void OnServerAddPlayer(NetworkConnection conn, short playerControllerId)
+    {
+        Debug.LogError("SERVER ADD PLAYER");
+        GameObject playerObj = GameObject.Instantiate(MyNetworkManager.singleton.playerPrefab);
+        NetworkServer.AddPlayerForConnection(conn, playerObj, 0);
+    }
+
     //On Scene Change
     public override void OnClientSceneChanged(NetworkConnection conn)
     {
+        Debug.LogError("CLIENT REQUEST ADD PLAYER");
         ClientScene.AddPlayer(conn, 1);
     }
 }

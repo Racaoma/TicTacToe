@@ -5,17 +5,18 @@ using UnityEngine.Networking;
 
 public class ClientNetworking : NetworkBehaviour
 {
-    //References
-    private ServerNetworking server;
+    //Control Variables
+    private Player currentTurn;
 
-    //Sync Variables
+    //My Variables
     public Player localPlayer;
     public Symbol localSymbol;
     public Color localColor;
 
-    //Control Variables
-    [SyncVar, SerializeField]
-    private Player currentTurn;
+    //Opponent Variables
+    public Player opponentPlayer;
+    public Symbol opponentSymbol;
+    public Color opponentColor;
 
     //On Start Authority
     public override void OnStartAuthority()
@@ -30,7 +31,6 @@ public class ClientNetworking : NetworkBehaviour
             //Spawn Server
             GameObject obj = Instantiate(MyNetworkManager.singleton.spawnPrefabs[0], Vector3.zero, Quaternion.identity);
             NetworkServer.Spawn(obj);
-            server = obj.GetComponent<ServerNetworking>();
         }
         //Client Side
         else
@@ -62,18 +62,22 @@ public class ClientNetworking : NetworkBehaviour
     [Command]
     public void CmdSendPlay(int cellNumber)
     {
-        server.makePlay(cellNumber, localSymbol);
+        ServerNetworking.Instance.makePlay(cellNumber, localSymbol);
     }
 
     [ClientRpc]
     public void RpcRelayPlay(int cellNumber, Symbol symbol)
     {
+        Debug.LogError("RECEIVED PLAY");
+
         //Update States
         int row = cellNumber / 3;
         int column = cellNumber % 3;
         GameState.Instance.updateCell(row, column, symbol);
         GameView.Instance.destroyGhost(cellNumber); //If Any
-        GameView.Instance.updateCell(cellNumber, symbol);
+
+        if(symbol == localSymbol) GameView.Instance.updateCell(cellNumber, symbol, localColor);
+        else GameView.Instance.updateCell(cellNumber, symbol, opponentColor);
 
         //Update Turn
         if (currentTurn == Player.Player1) currentTurn = Player.Player2;
@@ -84,15 +88,28 @@ public class ClientNetworking : NetworkBehaviour
     [Command]
     public void CmdRequestSync(Player player)
     {
-        if (player == Player.Player1) TargetRpcRelaySync(connectionToClient,GameManager.player1Symbol, GameManager.player1Color);
-        else TargetRpcRelaySync(connectionToClient, GameManager.player2Symbol, GameManager.player2Color);
+        if (player == Player.Player1) TargetRpcRelaySync(connectionToClient, GameManager.firstMove, GameManager.player1Symbol, GameManager.player1Color);
+        else TargetRpcRelaySync(connectionToClient, GameManager.firstMove, GameManager.player2Symbol, GameManager.player2Color);
     }
 
     [TargetRpc]
-    public void TargetRpcRelaySync(NetworkConnection target, Symbol symbolPlayer, Color colorPlayer)
+    public void TargetRpcRelaySync(NetworkConnection target, Player firstMove, Symbol symbolPlayer, Color colorPlayer)
     {
+        currentTurn = firstMove;
         localSymbol = symbolPlayer;
         localColor = colorPlayer;
+
+        if (localPlayer == Player.Player1) opponentPlayer = Player.Player2;
+        else opponentPlayer = Player.Player1;
+
+        if (symbolPlayer == Symbol.Circle) opponentSymbol = Symbol.Cross;
+        else opponentSymbol = Symbol.Circle;
+
+        if (colorPlayer == Color.red) opponentColor = Color.blue;
+        else opponentColor = Color.red;
+
+        Debug.LogError("SYNC RECEIVED");
+        Debug.LogError("Player " + localPlayer + ", Symbol " + localSymbol + ", Turn " + currentTurn);
     }
 
     //Start Game

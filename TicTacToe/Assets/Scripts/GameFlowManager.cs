@@ -31,6 +31,6 @@ public class GameFlowManager : MonoBehaviour
         view.resetBoard();
 
         //Start Music
-        audioControl.playMusic();
+        //audioControl.playMusic();
     }
 }

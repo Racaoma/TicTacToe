@@ -8,17 +8,12 @@ public class GameView : MonoBehaviour
     public GameObject board;
 
 	//Sprites
-	public Sprite circle;
-	public Sprite cross;
+	public Sprite circleSprite;
+	public Sprite crossSprite;
     public Sprite circle_outline;
     public Sprite cross_outline;
-
     public Sprite blueGranny;
     public Sprite redGranny;
-
-    //Color of Symbols
-    private Color colorCircle;
-    private Color colorCross;
 
     //Players Variables
     public Image player1Granny;
@@ -79,116 +74,43 @@ public class GameView : MonoBehaviour
         p2Panel.SetActive(true);
     }
 
-	//Set Random Colors for Symbols
-	public void setSymbols()
+    //Get Granny Sprite by Color
+    private Sprite getGrannyColor(Color color)
+    {
+        if (color == Color.red) return redGranny;
+        else return blueGranny;
+    }
+
+    //Get Sprite by Symbol
+    private Sprite getSpriteBySymbol(Symbol symbol)
+    {
+        if (symbol == Symbol.Circle) return circleSprite;
+        else return crossSprite;
+    }
+
+    //Set Random Colors for Symbols
+    public void setSymbols()
 	{
-        //Check Which Player You Are (Player 1)
-        if (ClientNetworking.getLocalClientNetworking().localPlayer == Player.Player1)
+        //Get Client
+        ClientNetworking client = ClientNetworking.getLocalClientNetworking();
+
+        if (client.localPlayer == Player.Player1)
         {
-            //Color Red
-            if (ClientNetworking.getLocalClientNetworking().localColor == Color.red)
-            {
-                //Update Random Color & Granny's Sprites
-                player1Granny.sprite = redGranny;
-                player1Symbol.color = Color.red;
-                player2Granny.sprite = blueGranny;
-                player2Symbol.color = Color.blue;
-
-                //Update Symbols
-                if (ClientNetworking.getLocalClientNetworking().localSymbol == Symbol.Circle)
-                {
-                    player1Symbol.sprite = circle;
-                    player2Symbol.sprite = cross;
-                    colorCircle = Color.red;
-                    colorCross = Color.blue;
-                }
-                else
-                {
-                    player1Symbol.sprite = cross;
-                    player2Symbol.sprite = circle;
-                    colorCircle = Color.blue;
-                    colorCross = Color.red;
-                }
-            }
-            //Color Blue
-            else
-            {
-                //Update Random Color & Granny's Sprites
-                player1Granny.sprite = blueGranny;
-                player1Symbol.color = Color.blue;
-                player2Granny.sprite = redGranny;
-                player2Symbol.color = Color.red;
-
-                //Update Symbols
-                if (ClientNetworking.getLocalClientNetworking().localSymbol == Symbol.Circle)
-                {
-                    player1Symbol.sprite = circle;
-                    player2Symbol.sprite = cross;
-                    colorCircle = Color.blue;
-                    colorCross = Color.red;
-                }
-                else
-                {
-                    player1Symbol.sprite = cross;
-                    player2Symbol.sprite = circle;
-                    colorCircle = Color.red;
-                    colorCross = Color.blue;
-                }
-            }
+            player1Granny.sprite = getGrannyColor(client.localColor);
+            player2Granny.sprite = getGrannyColor(client.opponentColor);
+            player1Symbol.color = client.localColor;
+            player2Symbol.color = client.opponentColor;
+            player1Symbol.sprite = getSpriteBySymbol(client.localSymbol);
+            player2Symbol.sprite = getSpriteBySymbol(client.opponentSymbol);
         }
-        //Check Which Player You Are (Player 2)
         else
         {
-            //Color Red
-            if (ClientNetworking.getLocalClientNetworking().localColor == Color.red)
-            {
-                //Update Random Color & Granny's Sprites
-                player1Granny.sprite = blueGranny;
-                player1Symbol.color = Color.blue;
-                player2Granny.sprite = redGranny;
-                player2Symbol.color = Color.red;
-
-                //Update Symbols
-                if (ClientNetworking.getLocalClientNetworking().localSymbol == Symbol.Circle)
-                {
-                    player1Symbol.sprite = cross;
-                    player2Symbol.sprite = circle;
-                    colorCircle = Color.red;
-                    colorCross = Color.blue;
-                }
-                else
-                {
-                    player1Symbol.sprite = cross;
-                    player2Symbol.sprite = circle;
-                    colorCircle = Color.blue;
-                    colorCross = Color.red;
-                }
-            }
-            //Color Blue
-            else
-            {
-                //Update Random Color & Granny's Sprites
-                player1Granny.sprite = redGranny;
-                player1Symbol.color = Color.red;
-                player2Granny.sprite = blueGranny;
-                player2Symbol.color = Color.blue;
-
-                //Update Symbols
-                if (ClientNetworking.getLocalClientNetworking().localSymbol == Symbol.Circle)
-                {
-                    player1Symbol.sprite = cross;
-                    player2Symbol.sprite = circle;
-                    colorCircle = Color.blue;
-                    colorCross = Color.red;
-                }
-                else
-                {
-                    player1Symbol.sprite = cross;
-                    player2Symbol.sprite = circle;
-                    colorCircle = Color.red;
-                    colorCross = Color.blue;
-                }
-            }
+            player2Granny.sprite = getGrannyColor(client.localColor);
+            player1Granny.sprite = getGrannyColor(client.opponentColor);
+            player2Symbol.color = client.localColor;
+            player1Symbol.color = client.opponentColor;
+            player2Symbol.sprite = getSpriteBySymbol(client.localSymbol);
+            player1Symbol.sprite = getSpriteBySymbol(client.opponentSymbol);
         }
     }
 
@@ -212,19 +134,11 @@ public class GameView : MonoBehaviour
     }
 
 	//Update Exact Cell
-	public void updateCell(int cellNumber, Symbol symbol)
+	public void updateCell(int cellNumber, Symbol symbol, Color color)
 	{
-		//Update Symbol
-		if(symbol == Symbol.Circle)
-		{
-            board.transform.GetChild(cellNumber).GetComponent<SpriteRenderer>().sprite = circle;
-            board.transform.GetChild (cellNumber).GetComponent<SpriteRenderer>().color = colorCircle;
-		}
-		else
-		{
-            board.transform.GetChild(cellNumber).GetComponent<SpriteRenderer>().sprite = cross;
-            board.transform.GetChild (cellNumber).GetComponent<SpriteRenderer>().color = colorCross;
-		} 
+        //Update Symbol
+        board.transform.GetChild(cellNumber).GetComponent<SpriteRenderer>().sprite = getSpriteBySymbol(symbol);
+        board.transform.GetChild(cellNumber).GetComponent<SpriteRenderer>().color = color;
 	}
 
     //Outline Winning Cell
@@ -244,15 +158,15 @@ public class GameView : MonoBehaviour
         spriteRenderer.color = Color.yellow;
 
         //Set Correct Sprite
-        if (parent.GetComponent<SpriteRenderer>().sprite == circle) spriteRenderer.sprite = circle_outline;
-        else if (parent.GetComponent<SpriteRenderer>().sprite == cross) spriteRenderer.sprite = cross_outline;
+        if (parent.GetComponent<SpriteRenderer>().sprite == circleSprite) spriteRenderer.sprite = circle_outline;
+        else if (parent.GetComponent<SpriteRenderer>().sprite == crossSprite) spriteRenderer.sprite = cross_outline;
     }
 
     //Create Ghost
     public void createGhost(int cellNumber, Symbol symbol)
 	{
-		if(symbol == Symbol.Circle) board.transform.GetChild(cellNumber).GetComponent<SpriteRenderer>().sprite = circle;
-		else board.transform.GetChild(cellNumber).GetComponent<SpriteRenderer>().sprite = cross;
+		if(symbol == Symbol.Circle) board.transform.GetChild(cellNumber).GetComponent<SpriteRenderer>().sprite = circleSprite;
+		else board.transform.GetChild(cellNumber).GetComponent<SpriteRenderer>().sprite = crossSprite;
 
         //Make it Transparent
         board.transform.GetChild (cellNumber).GetComponent<SpriteRenderer> ().color = new Color (0f,0f,0f,0.3f);

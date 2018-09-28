@@ -63,6 +63,7 @@ public class MatchListController : MonoBehaviour
                 {
                     GameObject buttonObject = Instantiate(MatchButtonTemplate);
                     buttonObject.transform.SetParent(viewPort.transform, false);
+                    buttonObject.GetComponent<MatchButton>().updateInfo(broadcastResults[i]);
                     matches.Add(buttonObject);
                 }
             }

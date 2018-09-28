@@ -29,7 +29,7 @@ public class ClickScript : MonoBehaviour
         if (client.isMyTurn())
         {
             //Check if Cell is Empty & Create Ghost
-            if (GameState.Instance.getBoardCell(cellNumber / 3, cellNumber % 3) == Symbol.None) GameView.Instance.createGhost(cellNumber, client.localSymbol);
+            if (GameState.Instance.getBoardCell(cellNumber / 3, cellNumber % 3) == Symbol.None) GameView.Instance.createGhost(cellNumber, client.playerSymbol);
         }
 	}
 

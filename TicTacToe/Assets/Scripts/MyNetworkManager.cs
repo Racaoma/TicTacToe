@@ -9,6 +9,10 @@ public class MyNetworkManager : NetworkManager
     //Refences
     private NetworkDiscovery Discovery;
 
+    //Control Variables
+    private NetworkConnection player1Connection;
+    private NetworkConnection player2Connection;
+
     //Get Network Discovery
     public NetworkDiscovery getNetworkDiscovery()
     {
@@ -53,18 +57,26 @@ public class MyNetworkManager : NetworkManager
         }
     }
 
-    //On Server Add Player
-    public override void OnServerAddPlayer(NetworkConnection conn, short playerControllerId)
+    //On Client Connect
+    public override void OnClientConnect(NetworkConnection conn) { } //Do Nothing
+
+    //Called on the server when a client is ready
+    public override void OnServerReady(NetworkConnection conn)
     {
-        Debug.LogError("SERVER ADD PLAYER");
-        GameObject playerObj = GameObject.Instantiate(MyNetworkManager.singleton.playerPrefab);
-        NetworkServer.AddPlayerForConnection(conn, playerObj, 0);
+        if (player1Connection == null) player1Connection = conn;
+        else
+        {
+            player2Connection = conn;
+            GameObject player1Obj = GameObject.Instantiate(MyNetworkManager.singleton.playerPrefab);
+            GameObject player2Obj = GameObject.Instantiate(MyNetworkManager.singleton.playerPrefab);
+            NetworkServer.AddPlayerForConnection(player1Connection, player1Obj, 1);
+            NetworkServer.AddPlayerForConnection(player2Connection, player2Obj, 2);
+        }
     }
 
     //On Scene Change
     public override void OnClientSceneChanged(NetworkConnection conn)
     {
-        Debug.LogError("CLIENT REQUEST ADD PLAYER");
-        ClientScene.AddPlayer(conn, 1);
+        ClientScene.Ready(conn);
     }
 }

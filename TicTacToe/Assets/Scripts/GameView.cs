@@ -93,24 +93,25 @@ public class GameView : MonoBehaviour
 	{
         //Get Client
         ClientNetworking client = ClientNetworking.getLocalClientNetworking();
+        ClientNetworking opponent = ClientNetworking.getOpponentClientNetworking();
 
-        if (client.localPlayer == Player.Player1)
+        if (client.playerNumber == Player.Player1)
         {
-            player1Granny.sprite = getGrannyColor(client.localColor);
-            player2Granny.sprite = getGrannyColor(client.opponentColor);
-            player1Symbol.color = client.localColor;
-            player2Symbol.color = client.opponentColor;
-            player1Symbol.sprite = getSpriteBySymbol(client.localSymbol);
-            player2Symbol.sprite = getSpriteBySymbol(client.opponentSymbol);
+            player1Granny.sprite = getGrannyColor(client.playerColor);
+            player2Granny.sprite = getGrannyColor(opponent.playerColor);
+            player1Symbol.color = client.playerColor;
+            player2Symbol.color = opponent.playerColor;
+            player1Symbol.sprite = getSpriteBySymbol(client.playerSymbol);
+            player2Symbol.sprite = getSpriteBySymbol(opponent.playerSymbol);
         }
         else
         {
-            player2Granny.sprite = getGrannyColor(client.localColor);
-            player1Granny.sprite = getGrannyColor(client.opponentColor);
-            player2Symbol.color = client.localColor;
-            player1Symbol.color = client.opponentColor;
-            player2Symbol.sprite = getSpriteBySymbol(client.localSymbol);
-            player1Symbol.sprite = getSpriteBySymbol(client.opponentSymbol);
+            player2Granny.sprite = getGrannyColor(client.playerColor);
+            player1Granny.sprite = getGrannyColor(opponent.playerColor);
+            player2Symbol.color = client.playerColor;
+            player1Symbol.color = opponent.playerColor;
+            player2Symbol.sprite = getSpriteBySymbol(client.playerSymbol);
+            player1Symbol.sprite = getSpriteBySymbol(opponent.playerSymbol);
         }
     }
 

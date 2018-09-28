@@ -5,7 +5,6 @@ using UnityEngine;
 public class ServerNetworking : MonoBehaviour
 {
     //References
-    private ClientNetworking client;
     private GameLogic gameLogicRef;
 
     private static ServerNetworking instance;
@@ -40,17 +39,18 @@ public class ServerNetworking : MonoBehaviour
     //Start
     private void Start()
     {
-        client = ClientNetworking.getLocalClientNetworking();
         gameLogicRef = this.GetComponent<GameLogic>();
     }
 
     //Make Play
-    public void makePlay(int cellNumber, Symbol symbol)
+    public bool makePlay(int cellNumber, Symbol symbol)
     {
-        gameLogicRef.makePlay(cellNumber, symbol);
-        client.RpcRelayPlay(cellNumber, symbol);
+        return gameLogicRef.makePlay(cellNumber, symbol);
+    }
 
-        VictoryType victoryType = gameLogicRef.checkEndGame();
-        if (victoryType != VictoryType.None) client.RpcRelayWinner(victoryType, symbol);
+    //Check End Game
+    public VictoryType checkEndGame()
+    {
+        return gameLogicRef.checkEndGame();
     }
 }

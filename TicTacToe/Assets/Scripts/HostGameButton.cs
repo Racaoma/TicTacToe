@@ -1,16 +1,18 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
+using UnityEngine.Networking.Match;
 using UnityEngine.UI;
 
-public class HostGameButton : MonoBehaviour
+public class HostGameButton : NetworkBehaviour
 {
     //References
     public InputField inputField;
     public Dropdown hostSymbol;
     public Dropdown startingPlayer;
 
-    //Create Match
+    //Create Lan Match
     public void CreateMatch()
     {
         if (!string.IsNullOrEmpty(inputField.text))
@@ -24,15 +26,34 @@ public class HostGameButton : MonoBehaviour
             else if (startingPlayer.value == 1) GameManager.firstMove = Player.Player1;
             else if (startingPlayer.value == 2) GameManager.firstMove = Player.Player2;
 
-            //Network
+            //Get Network Manager
             MyNetworkManager networkManager = MyNetworkManager.singleton.GetComponent<MyNetworkManager>();
-            networkManager.getNetworkDiscovery().StopBroadcast();
-            networkManager.getNetworkDiscovery().broadcastData = inputField.text;
-            networkManager.getNetworkDiscovery().StartAsServer();
-            MyNetworkManager.singleton.StartHost();
+
+            //Setup Match
+            if (networkManager.matchType == MatchType.LAN)
+            {
+                networkManager.getNetworkDiscovery().StopBroadcast();
+                networkManager.getNetworkDiscovery().broadcastData = inputField.text;
+                networkManager.getNetworkDiscovery().StartAsServer();
+                MyNetworkManager.singleton.StartHost();
+            }
+            else if(networkManager.matchType == MatchType.Internet)
+            {
+                networkManager.matchMaker.CreateMatch(inputField.text, 2, true, "", "", "", 0, 0, OnMatchCreate);
+            }
 
             //Load Scene
             FindObjectOfType<PanelFlow>().loadGame();
+        }
+    }
+
+    //Create Match Callback
+    public void OnMatchCreate(bool success, string extendedInfo, MatchInfo matchInfo)
+    {
+        if (success)
+        {
+            NetworkServer.Listen(matchInfo, 9000);
+            Utility.SetAccessTokenForNetwork(matchInfo.networkId, matchInfo.accessToken);
         }
     }
 }

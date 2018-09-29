@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 
-public class MatchListController : MonoBehaviour
+public class MatchListControllerLan : MonoBehaviour
 {
     //References
     public GameObject MatchButtonTemplate;
@@ -11,7 +11,7 @@ public class MatchListController : MonoBehaviour
     private MyNetworkManager networkManager;
 
     //Variables
-    public float DiscoveryUpdatePeriod = 0.5f;
+    public float DiscoveryUpdatePeriod = 3f;
     private List<GameObject> matches;
     private float updateTimer;
     private List<NetworkBroadcastResult> broadcastResults;
@@ -39,6 +39,12 @@ public class MatchListController : MonoBehaviour
             RefreshMatches();
             updateTimer = DiscoveryUpdatePeriod;
         }
+    }
+
+    //Request Refresh
+    public void requestRefresh()
+    {
+        updateTimer = 0f;
     }
 
     //Refresh Matches

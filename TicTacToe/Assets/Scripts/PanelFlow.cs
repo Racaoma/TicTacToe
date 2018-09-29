@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 public class PanelFlow : MonoBehaviour
 {
@@ -67,6 +68,8 @@ public class PanelFlow : MonoBehaviour
         music.volume = 0;
 
         //Change Scene
-        MyNetworkManager.singleton.ServerChangeScene("Game");
+        FindObjectOfType<MyNetworkManager>().loadGameScene();
+        //MyNetworkManager.singleton.ServerChangeScene("Game");
+        //SceneManager.LoadScene("Game", LoadSceneMode.Single);
     }
 }

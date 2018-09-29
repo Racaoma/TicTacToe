@@ -2,7 +2,16 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.Networking;
+using UnityEngine.Networking.Match;
+
+public enum MatchType
+{
+    None,
+    LAN,
+    Internet
+};
 
 public class MyNetworkManager : NetworkManager
 {
@@ -12,6 +21,20 @@ public class MyNetworkManager : NetworkManager
     //Control Variables
     private NetworkConnection player1Connection;
     private NetworkConnection player2Connection;
+    public MatchType matchType;
+
+    //Start
+    private void Start()
+    {
+        matchType = MatchType.None;
+    }
+
+    //Set Match Type
+    public void setMatchType(bool online)
+    {
+        if(online) matchType = MatchType.Internet;
+        else matchType = MatchType.LAN;
+    }
 
     //Get Network Discovery
     public NetworkDiscovery getNetworkDiscovery()
@@ -74,9 +97,14 @@ public class MyNetworkManager : NetworkManager
         }
     }
 
-    //On Scene Change
-    public override void OnClientSceneChanged(NetworkConnection conn)
+    //Load Game Method
+    public void loadGameScene()
     {
-        ClientScene.Ready(conn);
+        SceneManager.LoadScene("Game", LoadSceneMode.Single);
+
+        if (client == null) Debug.LogError("Client is null!");
+        else Debug.LogError("Connection: " + client.connection);
+
+        ClientScene.Ready(client.connection);
     }
 }

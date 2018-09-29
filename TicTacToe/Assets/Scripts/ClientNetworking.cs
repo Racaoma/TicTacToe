@@ -6,8 +6,6 @@ using UnityEngine.Networking;
 public class ClientNetworking : NetworkBehaviour
 {
     //Sync Variables
-    [SyncVar, SerializeField]
-    private Player currentTurn;
     [SyncVar]
     public Player playerNumber;
     [SyncVar]
@@ -23,20 +21,16 @@ public class ClientNetworking : NetworkBehaviour
         {
             Debug.LogError("Server");
             playerNumber = Player.Player1;
-            CmdRequestSync(playerNumber);
-            currentTurn = GameManager.firstMove;
-
-            //Spawn Server
-            GameObject obj = Instantiate(MyNetworkManager.singleton.spawnPrefabs[0], Vector3.zero, Quaternion.identity);
-            NetworkServer.Spawn(obj);
         }
         //Client Side
         else
         {
-            Debug.LogError("Client");
+            Debug.LogError("Server");
             playerNumber = Player.Player2;
-            CmdRequestSync(playerNumber);
         }
+
+        //Request Sync
+        CmdRequestSync(playerNumber);
     }
 
     //Get Local ClientNetworking
@@ -64,7 +58,7 @@ public class ClientNetworking : NetworkBehaviour
     //Check Turn
     public bool isMyTurn()
     {
-        return currentTurn == playerNumber;
+        return ServerNetworking.Instance.currentTurn == playerNumber;
     }
 
     //Make Play
@@ -78,9 +72,7 @@ public class ClientNetworking : NetworkBehaviour
             if (victoryCheck != VictoryType.None) RpcRelayWinner(victoryCheck, playerSymbol);
 
             //Update Turn
-            Debug.LogError("Turn Updated!");
-            if (currentTurn == Player.Player1) currentTurn = Player.Player2;
-            else currentTurn = Player.Player1;
+            ServerNetworking.Instance.updateTurn();
         }
     }
 
@@ -101,41 +93,35 @@ public class ClientNetworking : NetworkBehaviour
     [ClientRpc]
     public void RpcRelayWinner(VictoryType victoryType, Symbol winnerSymbol)
     {
-        GameView.Instance.displayWinner(victoryType, winnerSymbol == playerSymbol);
-        currentTurn = Player.None;
+        ServerNetworking.Instance.currentTurn = Player.None;
+        GameView.Instance.displayWinner(victoryType, winnerSymbol == ClientNetworking.getLocalClientNetworking().playerSymbol);
     }
 
     //Request Initial Sync
     [Command]
     public void CmdRequestSync(Player player)
     {
-        currentTurn = GameManager.firstMove;
         if (player == Player.Player1)
         {
+            //Host
             playerNumber = player;
             playerSymbol = GameManager.player1Symbol;
             playerColor = GameManager.player1Color;
         }
         else
         {
+            //Client
             playerNumber = player;
             playerSymbol = GameManager.player2Symbol;
             playerColor = GameManager.player2Color;
-            TargetRpcRequestGameStart(connectionToClient);
+
+            //Spawn Server
+            GameObject obj = Instantiate(MyNetworkManager.singleton.spawnPrefabs[0], Vector3.zero, Quaternion.identity);
+            NetworkServer.Spawn(obj);
+
+            //Relay Game Start
+            RpcRelayStartGame();
         }
-    }
-
-    //Start Game
-    [TargetRpc]
-    public void TargetRpcRequestGameStart(NetworkConnection target)
-    {
-        CmdRequestStartGame();
-    }
-
-    [Command]
-    public void CmdRequestStartGame()
-    {
-        RpcRelayStartGame();
     }
 
     [ClientRpc]

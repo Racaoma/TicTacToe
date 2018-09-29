@@ -1,9 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 
-public class ServerNetworking : MonoBehaviour
+public class ServerNetworking : NetworkBehaviour
 {
+    //Control Variables
+    [SyncVar]
+    public Player currentTurn;
+
     //References
     private GameLogic gameLogicRef;
 
@@ -40,6 +45,14 @@ public class ServerNetworking : MonoBehaviour
     private void Start()
     {
         gameLogicRef = this.GetComponent<GameLogic>();
+        currentTurn = GameManager.firstMove;
+    }
+
+    //Update Turn
+    public void updateTurn()
+    {
+        if (currentTurn == Player.Player1) currentTurn = Player.Player2;
+        else currentTurn = Player.Player1;
     }
 
     //Make Play

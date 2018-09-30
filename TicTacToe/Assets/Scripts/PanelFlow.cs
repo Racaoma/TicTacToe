@@ -1,7 +1,5 @@
 ﻿using UnityEngine;
-using UnityEngine.UI;
 using System.Collections;
-using UnityEngine.SceneManagement;
 
 public class PanelFlow : MonoBehaviour
 {
@@ -69,7 +67,5 @@ public class PanelFlow : MonoBehaviour
 
         //Change Scene
         FindObjectOfType<MyNetworkManager>().loadGameScene();
-        //MyNetworkManager.singleton.ServerChangeScene("Game");
-        //SceneManager.LoadScene("Game", LoadSceneMode.Single);
     }
 }

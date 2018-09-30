@@ -5,7 +5,7 @@ using UnityEngine.Networking;
 using UnityEngine.Networking.Match;
 using UnityEngine.UI;
 
-public class HostGameButton : NetworkBehaviour
+public class HostGameButton : MonoBehaviour
 {
     //References
     public InputField inputField;
@@ -39,21 +39,11 @@ public class HostGameButton : NetworkBehaviour
             }
             else if(networkManager.matchType == MatchType.Internet)
             {
-                networkManager.matchMaker.CreateMatch(inputField.text, 2, true, "", "", "", 0, 0, OnMatchCreate);
+                networkManager.matchMaker.CreateMatch(inputField.text, 2, true, "", "", "", 0, 0, MyNetworkManager.singleton.OnMatchCreate);
             }
 
             //Load Scene
             FindObjectOfType<PanelFlow>().loadGame();
-        }
-    }
-
-    //Create Match Callback
-    public void OnMatchCreate(bool success, string extendedInfo, MatchInfo matchInfo)
-    {
-        if (success)
-        {
-            NetworkServer.Listen(matchInfo, 9000);
-            Utility.SetAccessTokenForNetwork(matchInfo.networkId, matchInfo.accessToken);
         }
     }
 }

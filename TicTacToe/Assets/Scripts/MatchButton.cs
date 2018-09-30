@@ -32,7 +32,6 @@ public class MatchButton : MonoBehaviour
         if (networkDataMatch != null)
         {
             MyNetworkManager.singleton.matchMaker.JoinMatch(networkDataMatch.networkId, "", "", "", 0, 0, MyNetworkManager.singleton.OnMatchJoined);
-
         }
         else
         {

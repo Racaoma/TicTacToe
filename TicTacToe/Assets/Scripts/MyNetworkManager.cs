@@ -81,7 +81,19 @@ public class MyNetworkManager : NetworkManager
     }
 
     //On Client Connect
-    public override void OnClientConnect(NetworkConnection conn) { } //Do Nothing
+    public override void OnClientConnect(NetworkConnection conn) { }
+
+    //On Match Joined
+    public override void OnMatchJoined(bool success, string extendedInfo, MatchInfo matchInfo)
+    {
+        if (success)
+        {
+            Utility.SetAccessTokenForNetwork(matchInfo.networkId, matchInfo.accessToken);
+            NetworkClient client = new NetworkClient();
+            this.client = client;
+            client.Connect(matchInfo);
+        }
+    }
 
     //Called on the server when a client is ready
     public override void OnServerReady(NetworkConnection conn)
@@ -101,10 +113,6 @@ public class MyNetworkManager : NetworkManager
     public void loadGameScene()
     {
         SceneManager.LoadScene("Game", LoadSceneMode.Single);
-
-        if (client == null) Debug.LogError("Client is null!");
-        else Debug.LogError("Connection: " + client.connection);
-
-        ClientScene.Ready(client.connection);
+        if (client != null) ClientScene.Ready(client.connection);
     }
 }

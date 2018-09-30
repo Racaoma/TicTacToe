@@ -64,7 +64,7 @@ public class MatchListControllerLan : MonoBehaviour
             for (; i < broadcastResults.Count; i++)
             {
                 //Check for existing buttons
-                if (i < matches.Count) matches[i].GetComponent<MatchButton>().updateInfo(broadcastResults[i]);
+                if (i < matches.Count && matches[i] != null) matches[i].GetComponent<MatchButton>().updateInfo(broadcastResults[i]);
                 else
                 {
                     GameObject buttonObject = Instantiate(MatchButtonTemplate);
@@ -77,7 +77,7 @@ public class MatchListControllerLan : MonoBehaviour
             //Disable extra buttons for closed matches
             for (; i < matches.Count; i++)
             {
-                matches[i].SetActive(false);
+                if(matches[i] != null) matches[i].SetActive(false);
             }
         }
     }

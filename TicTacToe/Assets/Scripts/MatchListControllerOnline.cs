@@ -53,7 +53,7 @@ public class MatchListControllerOnline : MonoBehaviour
         for (; i < searchResults.Count; i++)
         {
             //Check for existing buttons
-            if (i < matches.Count) matches[i].GetComponent<MatchButton>().updateInfo(searchResults[i]);
+            if (i < matches.Count && matches[i] != null) matches[i].GetComponent<MatchButton>().updateInfo(searchResults[i]);
             else
             {
                 GameObject buttonObject = Instantiate(MatchButtonTemplate);

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.SceneManagement;
 
 public class ClientNetworking : NetworkBehaviour
 {
@@ -12,27 +13,28 @@ public class ClientNetworking : NetworkBehaviour
     public Symbol playerSymbol;
     [SyncVar]
     public Color playerColor;
+    [SyncVar(hook = "onClientReady")]
+    public bool ready = false;
 
     //On Start Authority
     public override void OnStartAuthority()
     {
+        //Base Method
         base.OnStartAuthority();
 
-        //Host Side
-        if (NetworkServer.active)
-        {
-            Debug.LogError("Server");
-            playerNumber = Player.Player1;
-        }
-        //Client Side
-        else
-        {
-            Debug.LogError("Client");
-            playerNumber = Player.Player2;
-        }
+        //Set Player
+        if (NetworkServer.active) playerNumber = Player.Player1;
+        else playerNumber = Player.Player2;
 
         //Request Sync
-        //CmdRequestSync(playerNumber);
+        CmdRequestSync(playerNumber);
+    }
+
+    //On Ready
+    public void onClientReady(bool ready)
+    {
+        //Only Call on Client
+        if (playerNumber == Player.Player2 && ready) CmdRequestGameStart();
     }
 
     //Get Local ClientNetworking
@@ -109,6 +111,7 @@ public class ClientNetworking : NetworkBehaviour
             playerNumber = player;
             playerSymbol = GameManager.player1Symbol;
             playerColor = GameManager.player1Color;
+            ready = true;
         }
         else
         {
@@ -116,14 +119,19 @@ public class ClientNetworking : NetworkBehaviour
             playerNumber = player;
             playerSymbol = GameManager.player2Symbol;
             playerColor = GameManager.player2Color;
+            ready = true;
 
             //Spawn Server
             GameObject obj = Instantiate(MyNetworkManager.singleton.spawnPrefabs[0], Vector3.zero, Quaternion.identity);
             NetworkServer.Spawn(obj);
-
-            //Relay Game Start
-            RpcRelayStartGame();
         }
+    }
+
+    //Request Game Start
+    [Command]
+    public void CmdRequestGameStart()
+    {
+        RpcRelayStartGame();
     }
 
     [ClientRpc]

@@ -95,9 +95,6 @@ public class GameView : MonoBehaviour
         ClientNetworking client = ClientNetworking.getLocalClientNetworking();
         ClientNetworking opponent = ClientNetworking.getOpponentClientNetworking();
 
-        Debug.LogError("Client: " + opponent.playerColor);
-        Debug.LogError("Opponent: " + opponent.playerColor);
-
         if (client.playerNumber == Player.Player1)
         {
             player1Granny.sprite = getGrannyColor(client.playerColor);
@@ -106,6 +103,8 @@ public class GameView : MonoBehaviour
             player2Symbol.color = opponent.playerColor;
             player1Symbol.sprite = getSpriteBySymbol(client.playerSymbol);
             player2Symbol.sprite = getSpriteBySymbol(opponent.playerSymbol);
+            player1Text.text = "You";
+            player2Text.text = "Opponent";
         }
         else
         {
@@ -115,6 +114,8 @@ public class GameView : MonoBehaviour
             player1Symbol.color = opponent.playerColor;
             player2Symbol.sprite = getSpriteBySymbol(client.playerSymbol);
             player1Symbol.sprite = getSpriteBySymbol(opponent.playerSymbol);
+            player1Text.text = "Opponent";
+            player2Text.text = "You";
         }
     }
 

@@ -33,7 +33,7 @@ public class MatchButton : MonoBehaviour
         //Load Game Scene
         networkManager = MyNetworkManager.singleton.GetComponent<MyNetworkManager>();
         if(networkManager.multiplayerType == MultiplayerType.LAN) FindObjectOfType<PanelFlow>().loadGame(connectLAN);
-        else FindObjectOfType<PanelFlow>().loadGame(connectInternet);
+        else if(networkManager.multiplayerType == MultiplayerType.Internet) FindObjectOfType<PanelFlow>().loadGame(connectInternet);
     }
 
     //Connect
@@ -47,6 +47,6 @@ public class MatchButton : MonoBehaviour
     //Connect
     public void connectInternet()
     {
-        networkManager.matchMaker.JoinMatch(networkDataMatch.networkId, "", "", "", 0, 0, MyNetworkManager.singleton.OnMatchJoined);
+        networkManager.matchMaker.JoinMatch(networkDataMatch.networkId, "", "", "", 0, 0, networkManager.OnMatchJoined);
     }
 }

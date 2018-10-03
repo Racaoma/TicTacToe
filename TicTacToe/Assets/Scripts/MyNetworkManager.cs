@@ -19,8 +19,6 @@ public class MyNetworkManager : NetworkManager
     private NetworkDiscovery Discovery;
 
     //Control Variables
-    private NetworkConnection player1Connection;
-    private NetworkConnection player2Connection;
     public MultiplayerType multiplayerType;
     public bool loadingLevel;
 
@@ -31,11 +29,16 @@ public class MyNetworkManager : NetworkManager
         loadingLevel = false;
     }
 
-    //Set Multiplayer Type
-    public void setMultiplayerType(bool internet)
+    //Set Multiplayer Type (LAN)
+    public void setMultiplayerLAN()
     {
-        if(internet) this.multiplayerType = MultiplayerType.Internet;
-        else this.multiplayerType = MultiplayerType.LAN;
+        this.multiplayerType = MultiplayerType.LAN;
+    }
+
+    //Set Multiplayer Type (Internet)
+    public void setMultiplayerInternet()
+    {
+        this.multiplayerType = MultiplayerType.Internet;
     }
 
     //Get Network Discovery
@@ -47,6 +50,7 @@ public class MyNetworkManager : NetworkManager
     //On Host Start
     public override void OnStartHost()
     {
+        //Base Method
         base.OnStartHost();
 
         //Define Symbol Random

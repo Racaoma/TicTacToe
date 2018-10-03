@@ -8,15 +8,21 @@ using UnityEngine.UI;
 public class HostGameButton : MonoBehaviour
 {
     //References
-    public InputField inputField;
     public Dropdown hostSymbol;
     public Dropdown startingPlayer;
     private MyNetworkManager networkManager;
+    private string roomName;
+
+    //Update Room Name
+    public void updateRoomName(string name)
+    {
+        roomName = name;
+    }
 
     //Create Lan Match
     public void CreateMatch()
     {
-        if (!string.IsNullOrEmpty(inputField.text))
+        if (!string.IsNullOrEmpty(roomName))
         {
             //Setup
             if (hostSymbol.value == 0) GameManager.player1Symbol = Symbol.None;
@@ -30,7 +36,7 @@ public class HostGameButton : MonoBehaviour
             //Load Scene
             networkManager = MyNetworkManager.singleton.GetComponent<MyNetworkManager>();
             if (networkManager.multiplayerType == MultiplayerType.LAN) FindObjectOfType<PanelFlow>().loadGame(createMatchLAN);
-            else FindObjectOfType<PanelFlow>().loadGame(createMatchInternet);
+            else if (networkManager.multiplayerType == MultiplayerType.Internet) FindObjectOfType<PanelFlow>().loadGame(createMatchInternet);
         }
     }
 
@@ -38,7 +44,7 @@ public class HostGameButton : MonoBehaviour
     public void createMatchLAN()
     {
         networkManager.getNetworkDiscovery().StopBroadcast();
-        networkManager.getNetworkDiscovery().broadcastData = inputField.text;
+        networkManager.getNetworkDiscovery().broadcastData = roomName;
         networkManager.getNetworkDiscovery().StartAsServer();
         MyNetworkManager.singleton.StartHost();
     }
@@ -47,6 +53,6 @@ public class HostGameButton : MonoBehaviour
     public void createMatchInternet()
     {
         MyNetworkManager networkManager = MyNetworkManager.singleton.GetComponent<MyNetworkManager>();
-        networkManager.matchMaker.CreateMatch(inputField.text, 2, true, "", "", "", 0, 0, MyNetworkManager.singleton.OnMatchCreate);
+        networkManager.matchMaker.CreateMatch(roomName, 2, true, "", "", "", 0, 0, networkManager.OnMatchCreate);
     }
 }

@@ -75,10 +75,12 @@ public class PanelFlow : MonoBehaviour
         }
         music.volume = 0;
 
-        //Change Scene
+        //Change Scene & Wait for it to become active (next frame)
         SceneManager.LoadScene("Game", LoadSceneMode.Single);
+        yield return new WaitForEndOfFrame();
 
         //Call Delegated Function
+        networkManager.loadingLevel = false;
         delegateFunction();
     }
 }

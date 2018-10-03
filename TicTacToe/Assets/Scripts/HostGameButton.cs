@@ -11,6 +11,7 @@ public class HostGameButton : MonoBehaviour
     public InputField inputField;
     public Dropdown hostSymbol;
     public Dropdown startingPlayer;
+    private MyNetworkManager networkManager;
 
     //Create Lan Match
     public void CreateMatch()
@@ -26,24 +27,26 @@ public class HostGameButton : MonoBehaviour
             else if (startingPlayer.value == 1) GameManager.firstMove = Player.Player1;
             else if (startingPlayer.value == 2) GameManager.firstMove = Player.Player2;
 
-            //Get Network Manager
-            MyNetworkManager networkManager = MyNetworkManager.singleton.GetComponent<MyNetworkManager>();
-
-            //Setup Match
-            if (networkManager.matchType == MatchType.LAN)
-            {
-                networkManager.getNetworkDiscovery().StopBroadcast();
-                networkManager.getNetworkDiscovery().broadcastData = inputField.text;
-                networkManager.getNetworkDiscovery().StartAsServer();
-                MyNetworkManager.singleton.StartHost();
-            }
-            else if(networkManager.matchType == MatchType.Internet)
-            {
-                networkManager.matchMaker.CreateMatch(inputField.text, 2, true, "", "", "", 0, 0, MyNetworkManager.singleton.OnMatchCreate);
-            }
-
             //Load Scene
-            FindObjectOfType<PanelFlow>().loadGame();
+            networkManager = MyNetworkManager.singleton.GetComponent<MyNetworkManager>();
+            if (networkManager.multiplayerType == MultiplayerType.LAN) FindObjectOfType<PanelFlow>().loadGame(createMatchLAN);
+            else FindObjectOfType<PanelFlow>().loadGame(createMatchInternet);
         }
+    }
+
+    //Create Match LAN
+    public void createMatchLAN()
+    {
+        networkManager.getNetworkDiscovery().StopBroadcast();
+        networkManager.getNetworkDiscovery().broadcastData = inputField.text;
+        networkManager.getNetworkDiscovery().StartAsServer();
+        MyNetworkManager.singleton.StartHost();
+    }
+
+    //Create Match Internet
+    public void createMatchInternet()
+    {
+        MyNetworkManager networkManager = MyNetworkManager.singleton.GetComponent<MyNetworkManager>();
+        networkManager.matchMaker.CreateMatch(inputField.text, 2, true, "", "", "", 0, 0, MyNetworkManager.singleton.OnMatchCreate);
     }
 }

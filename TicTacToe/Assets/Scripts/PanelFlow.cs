@@ -1,5 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.Networking.Match;
+using UnityEngine.SceneManagement;
+using UnityEngine.Networking;
+
+public delegate void LoadDelegate();
 
 public class PanelFlow : MonoBehaviour
 {
@@ -51,13 +56,18 @@ public class PanelFlow : MonoBehaviour
     }
 
     //Load Game & Fade Music
-    public void loadGame()
+    public void loadGame(LoadDelegate delegateFunction)
     {
-        StartCoroutine(FadeMusic());
+        StartCoroutine(StartLoad(delegateFunction));
     }
 
-    public IEnumerator FadeMusic()
+    //Load Game & Fade Music
+    public IEnumerator StartLoad(LoadDelegate delegateFunction)
     {
+        //Get Network Manager
+        MyNetworkManager networkManager = FindObjectOfType<MyNetworkManager>();
+        networkManager.loadingLevel = true;
+
         while (music.volume > .1F)
         {
             music.volume = Mathf.Lerp(music.volume, 0F, fadeTime * Time.deltaTime);
@@ -66,6 +76,9 @@ public class PanelFlow : MonoBehaviour
         music.volume = 0;
 
         //Change Scene
-        FindObjectOfType<MyNetworkManager>().loadGameScene();
+        SceneManager.LoadScene("Game", LoadSceneMode.Single);
+
+        //Call Delegated Function
+        delegateFunction();
     }
 }

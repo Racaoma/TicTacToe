@@ -11,15 +11,16 @@ public class MatchButton : MonoBehaviour
     //Variables
     private NetworkBroadcastResult networkDataBroadcast;
     private MatchInfoSnapshot networkDataMatch;
+    private MyNetworkManager networkManager;
 
-    //Update Info
+    //Update Info (LAN)
     public void updateInfo(NetworkBroadcastResult networkData)
     {
         GetComponentInChildren<Text>().text = Encoding.Unicode.GetString(networkData.broadcastData);
         this.networkDataBroadcast = networkData;
     }
 
-    //Update Info
+    //Update Info (Internet)
     public void updateInfo(MatchInfoSnapshot networkData)
     {
         GetComponentInChildren<Text>().text = networkData.name;
@@ -29,19 +30,23 @@ public class MatchButton : MonoBehaviour
     //Main Button Logic
     public void EnterMatch()
     {
-        if (networkDataMatch != null)
-        {
-            MyNetworkManager.singleton.matchMaker.JoinMatch(networkDataMatch.networkId, "", "", "", 0, 0, MyNetworkManager.singleton.OnMatchJoined);
-        }
-        else
-        {
-            MyNetworkManager.singleton.networkAddress = networkDataBroadcast.serverAddress;
-            MyNetworkManager.singleton.StartClient();
-            MyNetworkManager networkManager = MyNetworkManager.singleton.GetComponent<MyNetworkManager>();
-            networkManager.getNetworkDiscovery().StopBroadcast();
-        }
-
         //Load Game Scene
-        FindObjectOfType<PanelFlow>().loadGame();
+        networkManager = MyNetworkManager.singleton.GetComponent<MyNetworkManager>();
+        if(networkManager.multiplayerType == MultiplayerType.LAN) FindObjectOfType<PanelFlow>().loadGame(connectLAN);
+        else FindObjectOfType<PanelFlow>().loadGame(connectInternet);
+    }
+
+    //Connect
+    public void connectLAN()
+    {
+        networkManager.networkAddress = networkDataBroadcast.serverAddress;
+        networkManager.StartClient();
+        networkManager.getNetworkDiscovery().StopBroadcast();
+    }
+
+    //Connect
+    public void connectInternet()
+    {
+        networkManager.matchMaker.JoinMatch(networkDataMatch.networkId, "", "", "", 0, 0, MyNetworkManager.singleton.OnMatchJoined);
     }
 }

@@ -16,6 +16,8 @@ public class ClientNetworking : NetworkBehaviour
     //On Start Authority
     public override void OnStartAuthority()
     {
+        base.OnStartAuthority();
+
         //Host Side
         if (NetworkServer.active)
         {
@@ -25,12 +27,12 @@ public class ClientNetworking : NetworkBehaviour
         //Client Side
         else
         {
-            Debug.LogError("Server");
+            Debug.LogError("Client");
             playerNumber = Player.Player2;
         }
 
         //Request Sync
-        CmdRequestSync(playerNumber);
+        //CmdRequestSync(playerNumber);
     }
 
     //Get Local ClientNetworking

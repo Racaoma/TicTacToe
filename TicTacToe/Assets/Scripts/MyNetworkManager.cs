@@ -6,12 +6,12 @@ using UnityEngine.SceneManagement;
 using UnityEngine.Networking;
 using UnityEngine.Networking.Match;
 
-public enum MatchType
+public enum MultiplayerType
 {
     None,
     LAN,
     Internet
-};
+}
 
 public class MyNetworkManager : NetworkManager
 {
@@ -21,19 +21,21 @@ public class MyNetworkManager : NetworkManager
     //Control Variables
     private NetworkConnection player1Connection;
     private NetworkConnection player2Connection;
-    public MatchType matchType;
+    public MultiplayerType multiplayerType;
+    public bool loadingLevel;
 
     //Start
     private void Start()
     {
-        matchType = MatchType.None;
+        multiplayerType = MultiplayerType.None;
+        loadingLevel = false;
     }
 
-    //Set Match Type
-    public void setMatchType(bool online)
+    //Set Multiplayer Type
+    public void setMultiplayerType(bool internet)
     {
-        if(online) matchType = MatchType.Internet;
-        else matchType = MatchType.LAN;
+        if(internet) this.multiplayerType = MultiplayerType.Internet;
+        else this.multiplayerType = MultiplayerType.LAN;
     }
 
     //Get Network Discovery
@@ -45,6 +47,8 @@ public class MyNetworkManager : NetworkManager
     //On Host Start
     public override void OnStartHost()
     {
+        base.OnStartHost();
+
         //Define Symbol Random
         if(GameManager.player1Symbol == Symbol.None)
         {
@@ -78,41 +82,5 @@ public class MyNetworkManager : NetworkManager
             if (UnityEngine.Random.value >= 0.5f) GameManager.firstMove = Player.Player1;
             else GameManager.firstMove = Player.Player2;
         }
-    }
-
-    //On Client Connect
-    public override void OnClientConnect(NetworkConnection conn) { }
-
-    //On Match Joined
-    public override void OnMatchJoined(bool success, string extendedInfo, MatchInfo matchInfo)
-    {
-        if (success)
-        {
-            Utility.SetAccessTokenForNetwork(matchInfo.networkId, matchInfo.accessToken);
-            NetworkClient client = new NetworkClient();
-            this.client = client;
-            client.Connect(matchInfo);
-        }
-    }
-
-    //Called on the server when a client is ready
-    public override void OnServerReady(NetworkConnection conn)
-    {
-        if (player1Connection == null) player1Connection = conn;
-        else
-        {
-            player2Connection = conn;
-            GameObject player1Obj = GameObject.Instantiate(MyNetworkManager.singleton.playerPrefab);
-            GameObject player2Obj = GameObject.Instantiate(MyNetworkManager.singleton.playerPrefab);
-            NetworkServer.AddPlayerForConnection(player1Connection, player1Obj, 1);
-            NetworkServer.AddPlayerForConnection(player2Connection, player2Obj, 2);
-        }
-    }
-
-    //Load Game Method
-    public void loadGameScene()
-    {
-        SceneManager.LoadScene("Game", LoadSceneMode.Single);
-        if (client != null) ClientScene.Ready(client.connection);
     }
 }

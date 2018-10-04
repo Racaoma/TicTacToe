@@ -20,7 +20,7 @@ public class AudioControl : MonoBehaviour
     }
 
 	//Method for Playing Sound
-	public void playSound()
+	public void playGrunt()
 	{
 		audioSource.clip = audios[Random.Range(0, audios.Length)];
 		audioSource.Play();

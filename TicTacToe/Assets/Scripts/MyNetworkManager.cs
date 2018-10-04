@@ -29,6 +29,17 @@ public class MyNetworkManager : NetworkManager
         loadingLevel = false;
     }
 
+    //On Disconnect
+    public override void OnServerDisconnect(NetworkConnection conn)
+    {
+        FindObjectOfType<GameView>().displayPlayerDisconnectedPanel();
+    }
+
+    public override void OnClientDisconnect(NetworkConnection conn)
+    {
+        FindObjectOfType<GameView>().displayPlayerDisconnectedPanel();
+    }
+
     //Set Multiplayer Type (LAN)
     public void setMultiplayerLAN()
     {

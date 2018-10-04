@@ -13,8 +13,15 @@ public class GameFlowManager : MonoBehaviour
     //Return to Main Menu
     public void loadTitleScreen(bool fade)
     {
-        if(fade) StartCoroutine(audioControl.FadeMusic());
-        else SceneManager.LoadScene("TitleScreen", LoadSceneMode.Single);
+        if (fade) StartCoroutine(audioControl.FadeMusic());
+        else
+        {
+            //Break Connection
+            MyNetworkManager.singleton.StopHost();
+
+            //Load Title Screen Scene
+            SceneManager.LoadScene("TitleScreen", LoadSceneMode.Single);
+        }
     }
 
     //Setup Game
@@ -32,6 +39,6 @@ public class GameFlowManager : MonoBehaviour
         view.resetBoard();
 
         //Start Music
-        //audioControl.playMusic();
+        audioControl.playMusic();
     }
 }

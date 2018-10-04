@@ -6,11 +6,13 @@ using UnityEngine.Networking;
 public class ServerNetworking : NetworkBehaviour
 {
     //Control Variables
-    [SyncVar]
-    public Player currentTurn;
+    [SyncVar(hook = "onTurnChange")]
+    public Player currentTurn = Player.None;
 
     //References
     private GameLogic gameLogicRef;
+    private GameView gameViewRef;
+    private AudioControl audioControlRef;
 
     private static ServerNetworking instance;
     public static ServerNetworking Instance
@@ -41,10 +43,20 @@ public class ServerNetworking : NetworkBehaviour
         instance = null;
     }
 
+    //On Turn Change
+    public void onTurnChange(Player currentPlayer)
+    {
+        currentTurn = currentPlayer;
+        gameViewRef.highlightPlayer(currentPlayer);
+        audioControlRef.playGrunt();
+    }
+
     //Start
     private void Start()
     {
         gameLogicRef = this.GetComponent<GameLogic>();
+        gameViewRef = FindObjectOfType<GameView>();
+        audioControlRef = FindObjectOfType<AudioControl>();
         currentTurn = GameManager.firstMove;
     }
 

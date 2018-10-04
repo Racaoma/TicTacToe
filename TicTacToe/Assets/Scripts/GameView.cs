@@ -26,6 +26,7 @@ public class GameView : MonoBehaviour
     //Panels
     public GameObject winnerPanel;
     public GameObject standbyPanel;
+    public GameObject playerDisconnectedPanel;
     public GameObject p1Panel;
     public GameObject p2Panel;
 
@@ -190,14 +191,6 @@ public class GameView : MonoBehaviour
 		else player2Granny.transform.localScale = new Vector3(-1.3f, 1.3f, 1f);
 	}
 
-	//Update Method
-	void Update()
-	{
-        //Decay Highlight
-        if (player1Granny.transform.localScale.x > 1.15f || player1Granny.transform.localScale.y > 1.15f) player1Granny.transform.localScale = Vector3.Lerp(player1Granny.transform.localScale, new Vector3(1.15f, 1.15f, 1f), highlightDecay * Time.deltaTime);
-        if (player2Granny.transform.localScale.x < -1.15f || player2Granny.transform.localScale.y > 1.15f) player2Granny.transform.localScale = Vector3.Lerp(player2Granny.transform.localScale, new Vector3(-1.15f, 1.15f, 1f), highlightDecay * Time.deltaTime);
-	}
-
     //Display Winner
     public void displayWinner(VictoryType victoryType, bool winner)
 	{
@@ -258,5 +251,20 @@ public class GameView : MonoBehaviour
 
         //Enable Panel
         winnerPanel.SetActive(true);
+    }
+
+    //Display Player Disconnected Panel
+    public void displayPlayerDisconnectedPanel()
+    {
+        board.SetActive(false);
+        playerDisconnectedPanel.SetActive(true);
+    }
+
+    //Update Method
+    void Update()
+    {
+        //Decay Highlight
+        if (player1Granny.transform.localScale.x > 1.15f || player1Granny.transform.localScale.y > 1.15f) player1Granny.transform.localScale = Vector3.Lerp(player1Granny.transform.localScale, new Vector3(1.15f, 1.15f, 1f), highlightDecay * Time.deltaTime);
+        if (player2Granny.transform.localScale.x < -1.15f || player2Granny.transform.localScale.y > 1.15f) player2Granny.transform.localScale = Vector3.Lerp(player2Granny.transform.localScale, new Vector3(-1.15f, 1.15f, 1f), highlightDecay * Time.deltaTime);
     }
 }

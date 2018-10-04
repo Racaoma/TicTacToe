@@ -13,8 +13,6 @@ public class ClientNetworking : NetworkBehaviour
     public Symbol playerSymbol;
     [SyncVar]
     public Color playerColor;
-    [SyncVar(hook = "onClientReady")]
-    public bool ready = false;
 
     //On Start Authority
     public override void OnStartAuthority()
@@ -30,11 +28,11 @@ public class ClientNetworking : NetworkBehaviour
         CmdRequestSync(playerNumber);
     }
 
-    //On Ready
-    public void onClientReady(bool ready)
+    //Stop Client & Host
+    public void stopClient()
     {
-        //Only Call on Client
-        if (playerNumber == Player.Player2 && ready) CmdRequestGameStart();
+        MyNetworkManager.singleton.StopClient();
+        if(isServer) MyNetworkManager.singleton.StopHost();
     }
 
     //Get Local ClientNetworking
@@ -111,7 +109,6 @@ public class ClientNetworking : NetworkBehaviour
             playerNumber = player;
             playerSymbol = GameManager.player1Symbol;
             playerColor = GameManager.player1Color;
-            ready = true;
         }
         else
         {
@@ -119,12 +116,28 @@ public class ClientNetworking : NetworkBehaviour
             playerNumber = player;
             playerSymbol = GameManager.player2Symbol;
             playerColor = GameManager.player2Color;
-            ready = true;
 
-            //Spawn Server
+            //Spawn Server (Server Side)
             GameObject obj = Instantiate(MyNetworkManager.singleton.spawnPrefabs[0], Vector3.zero, Quaternion.identity);
             NetworkServer.Spawn(obj);
+
+            //Trigget Wait for Sync
+            TargetRpcWaitForSync(connectionToClient);
         }
+    }
+
+    //Wait For Sync to Complete
+    [TargetRpc]
+    public void TargetRpcWaitForSync(NetworkConnection target)
+    {
+        StartCoroutine(waitForSyncToFinish());
+    }
+
+    //Corroutine Wait for Sync
+    public IEnumerator waitForSyncToFinish()
+    {
+        while(playerNumber == Player.None || playerSymbol == Symbol.None || playerColor == Color.black) yield return 0;
+        CmdRequestGameStart();
     }
 
     //Request Game Start

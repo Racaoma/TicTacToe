@@ -33,6 +33,7 @@ public class GameView : MonoBehaviour
     //Highlight Decay
     private float highlightDecay = 1.75f;
 
+    //Singleton
     private static GameView instance;
     public static GameView Instance
     {
@@ -62,9 +63,9 @@ public class GameView : MonoBehaviour
         instance = null;
     }
 
-    //Start Method
-    void Start() 
-	{
+    //Setup
+    public void setupGameView()
+    {
         //Setup
         resetBoard();
         setSymbols();
@@ -256,15 +257,27 @@ public class GameView : MonoBehaviour
     //Display Player Disconnected Panel
     public void displayPlayerDisconnectedPanel()
     {
-        board.SetActive(false);
-        playerDisconnectedPanel.SetActive(true);
+        if(!winnerPanel.activeInHierarchy)
+        {
+            board.SetActive(false);
+            standbyPanel.SetActive(false);
+            playerDisconnectedPanel.SetActive(true);
+            p1Panel.SetActive(false);
+            p2Panel.SetActive(false);
+        }
     }
 
     //Update Method
     void Update()
     {
         //Decay Highlight
-        if (player1Granny.transform.localScale.x > 1.15f || player1Granny.transform.localScale.y > 1.15f) player1Granny.transform.localScale = Vector3.Lerp(player1Granny.transform.localScale, new Vector3(1.15f, 1.15f, 1f), highlightDecay * Time.deltaTime);
-        if (player2Granny.transform.localScale.x < -1.15f || player2Granny.transform.localScale.y > 1.15f) player2Granny.transform.localScale = Vector3.Lerp(player2Granny.transform.localScale, new Vector3(-1.15f, 1.15f, 1f), highlightDecay * Time.deltaTime);
+        if (player1Granny.transform.localScale.x > 1.15f || player1Granny.transform.localScale.y > 1.15f)
+        {
+            player1Granny.transform.localScale = Vector3.Lerp(player1Granny.transform.localScale, new Vector3(1.15f, 1.15f, 1f), highlightDecay * Time.deltaTime);
+        }
+        if (player2Granny.transform.localScale.x < -1.15f || player2Granny.transform.localScale.y > 1.15f)
+        {
+            player2Granny.transform.localScale = Vector3.Lerp(player2Granny.transform.localScale, new Vector3(-1.15f, 1.15f, 1f), highlightDecay * Time.deltaTime);
+        }
     }
 }

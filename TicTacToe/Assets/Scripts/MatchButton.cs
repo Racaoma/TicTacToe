@@ -30,10 +30,21 @@ public class MatchButton : MonoBehaviour
     //Main Button Logic
     public void EnterMatch()
     {
-        //Load Game Scene
         networkManager = MyNetworkManager.singleton.GetComponent<MyNetworkManager>();
-        if(networkManager.multiplayerType == MultiplayerType.LAN) FindObjectOfType<PanelFlow>().loadGame(connectLAN);
-        else if(networkManager.multiplayerType == MultiplayerType.Internet) FindObjectOfType<PanelFlow>().loadGame(connectInternet);
+        if (networkManager.multiplayerType == MultiplayerType.LAN)
+        {
+            //Load Game Scene
+            PanelFlow.Instance.loadGame(connectLAN);
+        }
+        else if(networkManager.multiplayerType == MultiplayerType.Internet)
+        {
+            //If there is still space
+            if(networkDataMatch.currentSize < 2)
+            {
+                //Load Game Scene
+                PanelFlow.Instance.loadGame(connectInternet);
+            }
+        }
     }
 
     //Connect

@@ -1,8 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
-using UnityEngine.Networking.Match;
 using UnityEngine.SceneManagement;
-using UnityEngine.Networking;
 
 public delegate void LoadDelegate();
 
@@ -14,6 +12,36 @@ public class PanelFlow : MonoBehaviour
     //Music
     public AudioSource music;
     public float fadeTime = 1.75f;
+
+    //Singleton
+    private static PanelFlow instance;
+    public static PanelFlow Instance
+    {
+        get
+        {
+            return instance;
+        }
+    }
+
+    //On Object Awake
+    private void Awake()
+    {
+        //Check Singleton
+        if (instance != null && instance != this)
+        {
+            Destroy(this);
+        }
+        else
+        {
+            instance = this;
+        }
+    }
+
+    //On Object Destroy (Safeguard)
+    public void OnDestroy()
+    {
+        instance = null;
+    }
 
     //Return Methods
     public void exit()

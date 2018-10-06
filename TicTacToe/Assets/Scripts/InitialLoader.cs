@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ScreenResolutionFixer : MonoBehaviour
+public class InitialLoader : MonoBehaviour
 {
 
 	// Use this for initialization

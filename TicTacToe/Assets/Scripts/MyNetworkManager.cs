@@ -32,12 +32,26 @@ public class MyNetworkManager : NetworkManager
     //On Disconnect
     public override void OnServerDisconnect(NetworkConnection conn)
     {
-        FindObjectOfType<GameView>().displayPlayerDisconnectedPanel();
+        GameView.Instance.displayPlayerDisconnectedPanel();
     }
 
     public override void OnClientDisconnect(NetworkConnection conn)
     {
-        FindObjectOfType<GameView>().displayPlayerDisconnectedPanel();
+        GameView.Instance.displayPlayerDisconnectedPanel();
+    }
+
+    public override void OnMatchJoined(bool success, string extendedInfo, MatchInfo matchInfo)
+    {
+        if (success) base.OnMatchJoined(success, extendedInfo, matchInfo);
+        else GameView.Instance.displayPlayerDisconnectedPanel();
+    }
+
+    //Called on Server when a Client Connects
+    public override void OnServerConnect(NetworkConnection conn)
+    {
+        if (NetworkServer.connections.Count < 2) base.OnServerConnect(conn);
+        else if (NetworkServer.connections.Count == 2) Discovery.StopBroadcast();
+        else conn.Disconnect();
     }
 
     //Set Multiplayer Type (LAN)

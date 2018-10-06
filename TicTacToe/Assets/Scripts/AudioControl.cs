@@ -3,9 +3,39 @@ using System.Collections;
 
 public class AudioControl : MonoBehaviour 
 {
-	//Audios
-	public AudioClip[] audios;
-    public AudioSource music;
+    //Singleton
+    private static AudioControl instance;
+    public static AudioControl Instance
+    {
+        get
+        {
+            return instance;
+        }
+    }
+
+    //On Object Awake
+    private void Awake()
+    {
+        //Check Singleton
+        if (instance != null && instance != this)
+        {
+            Destroy(this);
+        }
+        else
+        {
+            instance = this;
+        }
+    }
+
+    //On Object Destroy (Safeguard)
+    public void OnDestroy()
+    {
+        instance = null;
+    }
+
+    //Audios
+    public AudioClip[] audiosClips;
+    public AudioSource musicSource;
 
 	//Audio Source
 	public AudioSource audioSource;
@@ -16,24 +46,24 @@ public class AudioControl : MonoBehaviour
     //Music
     public void playMusic()
     {
-        music.Play();
+        musicSource.Play();
     }
 
 	//Method for Playing Sound
 	public void playGrunt()
 	{
-		audioSource.clip = audios[Random.Range(0, audios.Length)];
+		audioSource.clip = audiosClips[Random.Range(0, audiosClips.Length)];
 		audioSource.Play();
 	}
 
     public IEnumerator FadeMusic()
     {
-        while (music.volume > .1F)
+        while (musicSource.volume > .1F)
         {
-            music.volume = Mathf.Lerp(music.volume, 0F, fadeTime * Time.deltaTime);
+            musicSource.volume = Mathf.Lerp(musicSource.volume, 0F, fadeTime * Time.deltaTime);
             yield return 0;
         }
-        music.volume = 0;
+        musicSource.volume = 0;
         FindObjectOfType<GameFlowManager>().loadTitleScreen(false);
     }
 }

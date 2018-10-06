@@ -32,7 +32,7 @@ public class GameFlowManager : MonoBehaviour
 
         //Start View
         GameView view = this.GetComponent<GameView>();
-        view.enabled = true;
+        view.setupGameView();
 
         //Reset Board
         GameState.Instance.resetBoard();

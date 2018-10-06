@@ -11,9 +11,8 @@ public class ServerNetworking : NetworkBehaviour
 
     //References
     private GameLogic gameLogicRef;
-    private GameView gameViewRef;
-    private AudioControl audioControlRef;
 
+    //Singleton
     private static ServerNetworking instance;
     public static ServerNetworking Instance
     {
@@ -47,16 +46,14 @@ public class ServerNetworking : NetworkBehaviour
     public void onTurnChange(Player currentPlayer)
     {
         currentTurn = currentPlayer;
-        gameViewRef.highlightPlayer(currentPlayer);
-        audioControlRef.playGrunt();
+        GameView.Instance.highlightPlayer(currentPlayer);
+        AudioControl.Instance.playGrunt();
     }
 
     //Start
     private void Start()
     {
         gameLogicRef = this.GetComponent<GameLogic>();
-        gameViewRef = FindObjectOfType<GameView>();
-        audioControlRef = FindObjectOfType<AudioControl>();
         currentTurn = GameManager.firstMove;
     }
 

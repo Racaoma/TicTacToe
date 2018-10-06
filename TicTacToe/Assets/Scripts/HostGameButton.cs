@@ -35,8 +35,8 @@ public class HostGameButton : MonoBehaviour
 
             //Load Scene
             networkManager = MyNetworkManager.singleton.GetComponent<MyNetworkManager>();
-            if (networkManager.multiplayerType == MultiplayerType.LAN) FindObjectOfType<PanelFlow>().loadGame(createMatchLAN);
-            else if (networkManager.multiplayerType == MultiplayerType.Internet) FindObjectOfType<PanelFlow>().loadGame(createMatchInternet);
+            if (networkManager.multiplayerType == MultiplayerType.LAN) PanelFlow.Instance.loadGame(createMatchLAN);
+            else if (networkManager.multiplayerType == MultiplayerType.Internet) PanelFlow.Instance.loadGame(createMatchInternet);
         }
     }
 
@@ -46,7 +46,7 @@ public class HostGameButton : MonoBehaviour
         networkManager.getNetworkDiscovery().StopBroadcast();
         networkManager.getNetworkDiscovery().broadcastData = roomName;
         networkManager.getNetworkDiscovery().StartAsServer();
-        MyNetworkManager.singleton.StartHost();
+        MyNetworkManager.singleton.StartHost(null, 2);
     }
 
     //Create Match Internet

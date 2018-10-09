@@ -15,9 +15,6 @@ public enum MultiplayerType
 
 public class MyNetworkManager : NetworkManager
 {
-    //Refences
-    private NetworkDiscovery Discovery;
-
     //Control Variables
     public MultiplayerType multiplayerType;
     public bool loadingLevel;
@@ -29,12 +26,13 @@ public class MyNetworkManager : NetworkManager
         loadingLevel = false;
     }
 
-    //On Disconnect
+    //Called on the server when a client disconnects.
     public override void OnServerDisconnect(NetworkConnection conn)
     {
-        GameView.Instance.displayPlayerDisconnectedPanel();
+        if (NetworkServer.connections.Count < 2) GameView.Instance.displayPlayerDisconnectedPanel();
     }
 
+    //Called on clients when disconnected from a server.
     public override void OnClientDisconnect(NetworkConnection conn)
     {
         GameView.Instance.displayPlayerDisconnectedPanel();
@@ -50,7 +48,11 @@ public class MyNetworkManager : NetworkManager
     public override void OnServerConnect(NetworkConnection conn)
     {
         if (NetworkServer.connections.Count < 2) base.OnServerConnect(conn);
-        else if (NetworkServer.connections.Count == 2) Discovery.StopBroadcast();
+        else if (NetworkServer.connections.Count == 2)
+        {
+            base.OnServerConnect(conn);
+            getNetworkDiscovery().StopBroadcast();
+        }
         else conn.Disconnect();
     }
 

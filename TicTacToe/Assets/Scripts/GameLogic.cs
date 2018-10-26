@@ -75,7 +75,7 @@ public class GameLogic : MonoBehaviour
                         {
                             if (i == 0) return VictoryType.Line1;
                             else if (i == 1) return VictoryType.Line2;
-                            else if (i == 1) return VictoryType.Line3;
+                            else if (i == 2) return VictoryType.Line3;
                         }
                     }
                 }
@@ -99,7 +99,7 @@ public class GameLogic : MonoBehaviour
                         {
                             if (i == 0) return VictoryType.Column1;
                             else if (i == 1) return VictoryType.Column2;
-                            else if (i == 1) return VictoryType.Column3;
+                            else if (i == 2) return VictoryType.Column3;
                         }
                     }
                 }
